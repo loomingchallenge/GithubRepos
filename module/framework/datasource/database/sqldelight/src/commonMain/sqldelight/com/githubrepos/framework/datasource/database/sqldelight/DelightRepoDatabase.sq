@@ -1,0 +1,90 @@
+CREATE TABLE IF NOT EXISTS ListRepo (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    description TEXT,
+    stars INTEGER NOT NULL,
+    forks INTEGER NOT NULL,
+    language TEXT
+);
+
+insertListRepo:
+REPLACE INTO ListRepo
+VALUES ?;
+
+deleteListRepos:
+DELETE FROM ListRepo;
+
+countListRepos:
+SELECT count(*)
+FROM ListRepo;
+
+getListRepos:
+SELECT *
+FROM ListRepo
+ORDER BY stars DESC, name ASC
+LIMIT :limit OFFSET :offset;
+
+countListReposByName:
+SELECT count(*)
+FROM ListRepo
+WHERE name LIKE :query OR description LIKE :query;
+
+getListReposByName:
+SELECT *
+FROM ListRepo
+WHERE name LIKE :query OR description LIKE :query
+ORDER BY stars DESC, name ASC
+LIMIT :limit OFFSET :offset;
+
+--------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS RepoPage (
+    repoId INTEGER NOT NULL PRIMARY KEY,
+    page INTEGER
+);
+
+insertRepoPage:
+REPLACE INTO RepoPage
+VALUES ?;
+
+deleteRepoPages:
+DELETE FROM RepoPage;
+
+getRepoPage:
+SELECT *
+FROM RepoPage
+WHERE repoId = :repoId;
+
+--------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS Repo (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    description TEXT,
+    url TEXT,
+    homepage TEXT,
+    cloneUrl TEXT,
+    deploymentsUrl TEXT,
+    stars INTEGER NOT NULL,
+    forks INTEGER NOT NULL,
+    language TEXT
+);
+
+insertRepo:
+REPLACE INTO Repo
+VALUES ?;
+
+deleteRepos:
+DELETE FROM Repo;
+
+deleteRepo:
+DELETE
+FROM Repo
+WHERE id=:id;
+
+getRepo:
+SELECT *
+FROM Repo
+WHERE id=:id;

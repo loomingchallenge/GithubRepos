@@ -1,0 +1,21 @@
+<resources>
+
+    <!--Repository list screen-->
+    <string name="repository_list_screen_title">GitHub Repositories</string>
+    <string name="repository_list_refresh">Refresh</string>
+    <string name="repository_list_language">Language: %1$s</string>
+    <string name="repository_list_retry">Retry</string>
+
+    <!--Repository screen-->
+    <string name="repository_screen_title">GitHub Repository</string>
+    <string name="repository_screen_github">GitHub Webpage</string>
+    <string name="repository_screen_homepage">Homepage</string>
+    <string name="repository_screen_clone">Clone</string>
+    <string name="repository_screen_deployments">Deployments</string>
+
+    <!--Errors-->
+    <string name="file_error">Error during reading of internal data file. %1$s</string>
+    <string name="unknown_error">Unknown error.</string>
+    <string name="no_internet_error">Failed to connect to server. Please check your internet connection.</string>
+
+</resources>
