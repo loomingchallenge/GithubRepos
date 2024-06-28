@@ -51,7 +51,7 @@ internal class SearchReposRemoteMediator(
         }
     }
 
-    private fun loadPage(loadType: LoadType, state: PagingState<Int, ListRepo>, page: Int) {
+    private suspend fun loadPage(loadType: LoadType, state: PagingState<Int, ListRepo>, page: Int) {
         val response = service.searchRepos(query, page, state.config.pageSize)
         repoDatabase.withTransaction {
             if (loadType == LoadType.REFRESH) {

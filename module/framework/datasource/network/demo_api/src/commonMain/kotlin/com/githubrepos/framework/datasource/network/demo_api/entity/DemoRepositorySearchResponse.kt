@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class DemoRepositorySearchResponse(
     @SerialName("total_count") val total: Int,
-    @SerialName("items") val items: List<Repo>
+    @SerialName("items") val items: List<DemoRepo>
 ) {
 
     fun getPageData(page: Int, itemsPerPage: Int): RepositorySearchResponse {
@@ -17,7 +17,7 @@ internal data class DemoRepositorySearchResponse(
         val lastIndex = (firstIndex + itemsPerPage - 1).coerceAtMost(items.lastIndex)
         val items = if (firstIndex <= items.lastIndex) {
             items.subList(firstIndex, lastIndex + 1).map {
-                it.toListRepo()
+                it.toRepo().toListRepo()
             }
         } else {
             listOf()
@@ -26,6 +26,7 @@ internal data class DemoRepositorySearchResponse(
     }
 
     fun getRepo(id: Long): Repo {
-        return items.find { it.id ==  id} ?: throw IllegalArgumentException("Repository with id $id is not in the list.")
+        return items.find { it.id == id }?.toRepo()
+            ?: throw IllegalArgumentException("Repository with id $id is not in the list.")
     }
 }

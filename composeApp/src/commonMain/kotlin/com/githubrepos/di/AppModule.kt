@@ -6,7 +6,8 @@ fun appModule() = module {
     includes(
         coreModule,
         dataModule,
-        demoApiModule,
+        // demoApiModule, // TODO flavours
+        ktorModule,
         sqlModule,
         presentationModule,
         uiModule,

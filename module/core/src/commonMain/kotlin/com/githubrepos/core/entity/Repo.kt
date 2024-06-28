@@ -1,21 +1,17 @@
 package com.githubrepos.core.entity
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Repo(
-    @SerialName("id") val id: Long,
-    @SerialName("name") val name: String,
-    @SerialName("full_name") val fullName: String,
-    @SerialName("description") val description: String?,
-    @SerialName("html_url") val url: String?,
-    @SerialName("homepage") val homepage: String?,
-    @SerialName("clone_url") val cloneUrl: String?,
-    @SerialName("deployments_url") val deploymentsUrl: String?,
-    @SerialName("stargazers_count") val stars: Int,
-    @SerialName("forks_count") val forks: Int,
-    @SerialName("language") val language: String?
+    val id: Long,
+    val name: String,
+    val fullName: String,
+    val description: String?,
+    val url: String?,
+    val homepage: String?,
+    val cloneUrl: String?,
+    val deploymentsUrl: String?,
+    val stars: Int,
+    val forks: Int,
+    val language: String?
 )
 
 val repoExample = Repo(

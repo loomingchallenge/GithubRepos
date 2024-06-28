@@ -36,7 +36,8 @@ kotlin {
             implementation(project(":module:core"))
             implementation(project(":module:adapter:data"))
             implementation(project(":module:adapter:presentation"))
-            implementation(project(":module:framework:datasource:network:demo_api"))
+            implementation(project(":module:framework:datasource:network:demo_api")) // TODO remove when flavours
+            implementation(project(":module:framework:datasource:network:ktor"))
             implementation(project(":module:framework:datasource:database:sqldelight"))
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))

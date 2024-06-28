@@ -12,7 +12,7 @@ import com.githubrepos.core.entity.Repo
 */
 class GithubServiceAdapter(private val githubService: GithubService)  {
 
-    fun searchRepos(
+    suspend fun searchRepos(
         query: String,
         page: Int,
         itemsPerPage: Int
@@ -24,7 +24,7 @@ class GithubServiceAdapter(private val githubService: GithubService)  {
         return response
     }
 
-    fun getRepo(id: Long): Repo {
+    suspend fun getRepo(id: Long): Repo {
         return githubService.getRepo(id)
     }
 }

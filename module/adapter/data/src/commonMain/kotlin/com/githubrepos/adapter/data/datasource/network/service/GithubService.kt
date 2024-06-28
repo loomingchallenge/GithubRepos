@@ -7,11 +7,11 @@ const val IN_QUALIFIER = "in:name,description"
 
 interface GithubService {
 
-    fun searchRepos(
+    suspend fun searchRepos(
         query: String,
         page: Int,
         itemsPerPage: Int
     ): RepositorySearchResponse
 
-    fun getRepo(id: Long): Repo
+    suspend fun getRepo(id: Long): Repo
 }

@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
@@ -81,9 +83,11 @@ internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, on
     Column(
         Modifier
             .padding(8.dp)
+            .verticalScroll(rememberScrollState())
             .then(modifier)) {
         Surface(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             color = MaterialTheme.colors.error,
             shape = RoundedCornerShape(4.dp)
         ) {
