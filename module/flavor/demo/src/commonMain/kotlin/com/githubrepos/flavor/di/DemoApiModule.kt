@@ -1,11 +1,11 @@
-package com.githubrepos.di
+package com.githubrepos.flavor.di
 
 import com.githubrepos.framework.datasource.network.demo_api.di.createGithubService
 import com.githubrepos.framework.datasource.network.demo_api.di.createNetworkServiceProvider
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-val demoApiModule = module {
+internal val demoApiModule = module {
     singleOf(::createNetworkServiceProvider)
     singleOf(::createGithubService)
 }

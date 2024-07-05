@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+val flavor: String by project
+println("The current build flavor is: $flavor")
+
 kotlin {
 
     androidTarget {
@@ -36,11 +39,14 @@ kotlin {
             implementation(project(":module:core"))
             implementation(project(":module:adapter:data"))
             implementation(project(":module:adapter:presentation"))
-            implementation(project(":module:framework:datasource:network:demo_api")) // TODO remove when flavours
-            implementation(project(":module:framework:datasource:network:ktor"))
             implementation(project(":module:framework:datasource:database:sqldelight"))
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))
+            if (flavor == "full") {
+                implementation(project(":module:flavor:full"))
+            } else {
+                implementation(project(":module:flavor:demo"))
+            }
 
             // Compose
             implementation(compose.runtime)

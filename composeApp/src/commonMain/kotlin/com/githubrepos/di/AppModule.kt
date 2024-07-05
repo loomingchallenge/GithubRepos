@@ -1,16 +1,16 @@
 package com.githubrepos.di
 
+import com.githubrepos.flavor.di.flavorModules
 import org.koin.dsl.module
 
 fun appModule() = module {
     includes(
         coreModule,
         dataModule,
-        // demoApiModule, // TODO flavours
-        ktorModule,
         sqlModule,
         presentationModule,
         uiModule,
-        navigationModule
+        navigationModule,
+        *flavorModules.toTypedArray()
     )
 }

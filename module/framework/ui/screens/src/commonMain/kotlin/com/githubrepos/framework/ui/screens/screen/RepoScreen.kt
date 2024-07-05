@@ -90,7 +90,7 @@ internal fun BoxScope.RepoLce(
 ) {
     if (repo == null) {
         if (error != null) {
-            RetryButton(Modifier.align(Alignment.Center), error, onRefresh)
+            RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), error, onRefresh)
         } else if (isLoading && refreshing.value == RefreshState.NOT_LOADING) {
             ProgressIndicator(Modifier.align(Alignment.Center))
         }

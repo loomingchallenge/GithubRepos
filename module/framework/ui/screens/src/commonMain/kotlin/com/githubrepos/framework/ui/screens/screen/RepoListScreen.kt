@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -73,7 +75,7 @@ fun RepoListScreen(
     ) {
         when (val loadState = repositories.loadState.refresh) {
             is LoadState.Loading -> ProgressIndicator(Modifier.align(Alignment.Center))
-            is LoadState.Error -> RetryButton(Modifier.align(Alignment.Center), loadState.error, onRefresh)
+            is LoadState.Error -> RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), loadState.error, onRefresh)
             is LoadState.NotLoading -> RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
         }
         PullRefreshIndicator(false, state, Modifier.align(Alignment.TopCenter))

@@ -83,7 +83,6 @@ internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, on
     Column(
         Modifier
             .padding(8.dp)
-            .verticalScroll(rememberScrollState())
             .then(modifier)) {
         Surface(
             modifier = Modifier
