@@ -7,11 +7,28 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-val flavor: String by project
-println("The current build flavor is: $flavor")
+private val FLAVOR_FULL = "Full"
+private val FLAVOR_DEMO = "Demo"
 
-val xcodeScheme: String? = System.getenv("XCODE_SCHEME")
-println("xcodeScheme from env: $xcodeScheme")
+fun Project.getFlavorName(): String? {
+    val taskRequests = gradle.startParameter.taskRequests.toString()
+    val flavorRegex = Regex("assemble([a-zA-Z]+)(Debug|Release)")
+    val matchResult = flavorRegex.find(taskRequests)
+    return matchResult?.groups?.get(1)?.value
+}
+
+val androidFlavor = project.getFlavorName()
+
+val iosFlavor: String? = System.getenv("IOS_FLAVOR")
+
+val flavor = if (iosFlavor == FLAVOR_FULL || androidFlavor == FLAVOR_FULL) {
+    FLAVOR_FULL
+} else if (iosFlavor == FLAVOR_DEMO || androidFlavor == FLAVOR_DEMO) {
+    FLAVOR_DEMO
+} else {
+    null
+}
+println("flavor: $flavor")
 
 kotlin {
 
@@ -46,12 +63,10 @@ kotlin {
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))
 
-            if (xcodeScheme == "FullApp" || (xcodeScheme == null && flavor == "full")) {
+            if (flavor == FLAVOR_FULL) {
                 implementation(project(":module:flavor:full"))
-                println("module:flavor:full was selected")
-            } else {
+            } else if (flavor == FLAVOR_DEMO) {
                 implementation(project(":module:flavor:demo"))
-                println("module:flavor:demo was selected")
             }
 
             // Compose
@@ -137,6 +152,22 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    flavorDimensions.add("default")
+    productFlavors {
+        create(FLAVOR_FULL) {
+            dimension = "default"
+            applicationIdSuffix = ".$FLAVOR_FULL"
+            versionNameSuffix = "-$FLAVOR_FULL"
+            resValue("string", "app_name", "GithubRepos")
+        }
+        create(FLAVOR_DEMO) {
+            dimension = "default"
+            applicationIdSuffix = ".$FLAVOR_DEMO"
+            versionNameSuffix = "-$FLAVOR_DEMO"
+            resValue("string", "app_name", "$FLAVOR_DEMO-GithubRepos")
+        }
     }
 }
 
