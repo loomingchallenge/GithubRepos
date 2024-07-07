@@ -10,6 +10,9 @@ plugins {
 val flavor: String by project
 println("The current build flavor is: $flavor")
 
+val xcodeScheme: String? = System.getenv("XCODE_SCHEME")
+println("xcodeScheme from env: $xcodeScheme")
+
 kotlin {
 
     androidTarget {
@@ -42,10 +45,13 @@ kotlin {
             implementation(project(":module:framework:datasource:database:sqldelight"))
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))
-            if (flavor == "full") {
+
+            if (xcodeScheme == "FullApp" || (xcodeScheme == null && flavor == "full")) {
                 implementation(project(":module:flavor:full"))
+                println("module:flavor:full was selected")
             } else {
                 implementation(project(":module:flavor:demo"))
+                println("module:flavor:demo was selected")
             }
 
             // Compose
