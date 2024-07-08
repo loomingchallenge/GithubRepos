@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-private val FLAVOR_FULL = "Full"
-private val FLAVOR_DEMO = "Demo"
+val FLAVOR_FULL = "Full"
+val FLAVOR_DEMO = "Demo"
 
 fun Project.getFlavorName(): String? {
     val taskRequests = gradle.startParameter.taskRequests.toString()
@@ -19,11 +19,11 @@ fun Project.getFlavorName(): String? {
 
 val androidFlavor = project.getFlavorName()
 
-val iosFlavor: String? = System.getenv("IOS_FLAVOR")
+val envFlavor: String? = System.getenv("FLAVOR")
 
-val flavor = if (iosFlavor == FLAVOR_FULL || androidFlavor == FLAVOR_FULL) {
+val flavor = if (envFlavor == FLAVOR_FULL || androidFlavor == FLAVOR_FULL) {
     FLAVOR_FULL
-} else if (iosFlavor == FLAVOR_DEMO || androidFlavor == FLAVOR_DEMO) {
+} else if (envFlavor == FLAVOR_DEMO || androidFlavor == FLAVOR_DEMO) {
     FLAVOR_DEMO
 } else {
     null
@@ -65,7 +65,7 @@ kotlin {
 
             if (flavor == FLAVOR_FULL) {
                 implementation(project(":module:flavor:full"))
-            } else if (flavor == FLAVOR_DEMO) {
+            } else {
                 implementation(project(":module:flavor:demo"))
             }
 
@@ -160,13 +160,11 @@ android {
             dimension = "default"
             applicationIdSuffix = ".$FLAVOR_FULL"
             versionNameSuffix = "-$FLAVOR_FULL"
-            resValue("string", "app_name", "GithubRepos")
         }
         create(FLAVOR_DEMO) {
             dimension = "default"
             applicationIdSuffix = ".$FLAVOR_DEMO"
             versionNameSuffix = "-$FLAVOR_DEMO"
-            resValue("string", "app_name", "$FLAVOR_DEMO-GithubRepos")
         }
     }
 }

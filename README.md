@@ -25,7 +25,11 @@ Configurations:
 androidApp
   Module: GithubRepos.composeApp.main
 iosApp
-gradle jvm
+gradle jvmFull
   Run: composeApp:jvmRun -DmainClass=MainKt --quiet
+  Environment variables: FLAVOR=Full
+gradle jvmDemo
+  Run: composeApp:jvmRun -DmainClass=MainKt --quiet
+  Environment variables: FLAVOR=Demo
 gradle web
   Run: :composeApp:wasmJsRun
