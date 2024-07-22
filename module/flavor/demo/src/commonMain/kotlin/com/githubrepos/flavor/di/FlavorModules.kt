@@ -1,3 +1,3 @@
 package com.githubrepos.flavor.di
 
-val flavorModules = listOf(demoApiModule)
+fun createFlavorModules(isDebug: Boolean) = listOf(createDemoApiModule(isDebug))

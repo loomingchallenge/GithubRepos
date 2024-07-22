@@ -1,3 +1,3 @@
-package com.githubrepos.flavor.di
+package com.githubrepos.flavor
 
 const val jvmAppName = "Demo-GithubRepos"

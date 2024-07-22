@@ -1,6 +1,7 @@
 package com.githubrepos.di
 
-import com.githubrepos.flavor.di.flavorModules
+import com.githubrepos.Config
+import com.githubrepos.flavor.di.createFlavorModules
 import org.koin.dsl.module
 
 fun appModule() = module {
@@ -11,6 +12,6 @@ fun appModule() = module {
         presentationModule,
         uiModule,
         navigationModule,
-        *flavorModules.toTypedArray()
+        *createFlavorModules(Config.isDebug).toTypedArray()
     )
 }

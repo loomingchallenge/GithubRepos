@@ -1,3 +1,3 @@
 package com.githubrepos.flavor.di
 
-val flavorModules = listOf(ktorModule)
+fun createFlavorModules(isDebug: Boolean) = listOf(createKtorModule(isDebug))

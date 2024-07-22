@@ -14,10 +14,10 @@ androidApp
 iosApp  
 gradle jvmFull  
   Run: composeApp:jvmRun -DmainClass=MainKt --quiet  
-  Environment variables: FLAVOR=Full  
+  Environment variables: FLAVOR=Full; DEBUG=true  
 gradle jvmDemo  
   Run: composeApp:jvmRun -DmainClass=MainKt --quiet  
-  Environment variables: FLAVOR=Demo  
+  Environment variables: FLAVOR=Demo; DEBUG=true  
 gradle web  
   Run: :composeApp:wasmJsRun  
 </pre>
