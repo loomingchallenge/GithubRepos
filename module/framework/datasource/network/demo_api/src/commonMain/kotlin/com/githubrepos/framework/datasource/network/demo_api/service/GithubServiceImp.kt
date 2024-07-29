@@ -21,7 +21,6 @@ internal class GithubServiceImp(private val networkStateProvider: NetworkStatePr
         } else {
             throw NoInternetException()
         }
-
     }
 
     override suspend fun getRepo(id: Long): Repo {
