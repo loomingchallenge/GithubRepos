@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    // TODO Add resources when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
+    // alias(libs.plugins.composeMultiplatform)
+    // alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinxResources)
     alias(libs.plugins.kotlinSerialization)
 }
 
@@ -43,6 +47,13 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kotlinx.coroutines.test)
+
+            // TODO Add resources when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
+            // implementation(compose.runtime)
+            // implementation(compose.components.resources)
+            implementation(libs.kotlinx.resources)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)

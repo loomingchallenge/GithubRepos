@@ -16,8 +16,17 @@ import io.ktor.client.plugins.plugin
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-fun createNetworkServiceProvider(areLogsEnabled: Boolean): NetworkServiceProvider {
-    val client = createHttpClient(createHttpClientEngine(), areLogsEnabled)
+fun createNetworkServiceProvider(
+    areLogsEnabled: Boolean
+): NetworkServiceProvider {
+    return createNetworkServiceProvider(areLogsEnabled, createHttpClientEngine())
+}
+
+internal fun createNetworkServiceProvider(
+    areLogsEnabled: Boolean,
+    engine: HttpClientEngine
+): NetworkServiceProvider {
+    val client = createHttpClient(engine, areLogsEnabled)
     return NetworkServiceProviderImp(client)
 }
 
