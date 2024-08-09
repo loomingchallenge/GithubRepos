@@ -5,10 +5,10 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.githubrepos.adapter.data.datasource.preferences.RepoPreferences
 import com.githubrepos.framework.datasource.preferences.multiplatform_settings.preferences.RepoPreferencesImp
-import com.githubrepos.framework.datasource.preferences.multiplatform_settings.preferences.repoPreferencesName
+import com.githubrepos.framework.datasource.preferences.multiplatform_settings.preferences.REPO_PREFERENCES_NAME
 import com.russhwolf.settings.SharedPreferencesSettings
 
-fun createRepoPreferences(context: Context): RepoPreferences {
+fun createRepoPreferences(context: Context, repoPreferencesName: String = REPO_PREFERENCES_NAME): RepoPreferences {
     val sharedPreferences = EncryptedSharedPreferences.create(
         context,
         repoPreferencesName,

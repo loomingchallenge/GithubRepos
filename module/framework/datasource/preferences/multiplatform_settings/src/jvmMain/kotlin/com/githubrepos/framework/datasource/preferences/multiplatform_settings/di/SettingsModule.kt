@@ -8,9 +8,9 @@ import com.githubrepos.framework.datasource.preferences.multiplatform_settings.p
 import com.russhwolf.settings.PreferencesSettings
 import java.util.prefs.Preferences
 
-fun createRepoPreferences(): RepoPreferences {
+fun createRepoPreferences(idClass: Class<*> = RepoPreferencesID::class.java): RepoPreferences {
     val kyeManager = SecretKeyManager()
-    val preferences = Preferences.userNodeForPackage(RepoPreferencesID::class.java)
+    val preferences = Preferences.userNodeForPackage(idClass)
     val encryptedPreferences = EncryptedPreferences(preferences, kyeManager.secretKey)
     return RepoPreferencesImp(PreferencesSettings(encryptedPreferences))
 }
