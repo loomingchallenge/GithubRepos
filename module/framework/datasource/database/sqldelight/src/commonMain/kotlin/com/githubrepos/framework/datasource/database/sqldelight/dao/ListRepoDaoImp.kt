@@ -1,6 +1,6 @@
 package com.githubrepos.framework.datasource.database.sqldelight.dao
 
-import androidx.paging.PagingSource
+import app.cash.paging.PagingSource
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.core.AppDispatchers

@@ -6,10 +6,10 @@ import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import java.io.File
 
-actual class DatabaseDriverFactory(private val appName: String) {
+actual class DatabaseDriverFactory(private val appName: String, private val databaseName: String) {
 
-    actual fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>, dbName: String): SqlDriver {
-        val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${getDatabaseFile(appName, dbName).absolutePath}")
+    actual fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
+        val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${getDatabaseFile(appName, databaseName).absolutePath}")
         schema.create(driver)
         return driver
     }

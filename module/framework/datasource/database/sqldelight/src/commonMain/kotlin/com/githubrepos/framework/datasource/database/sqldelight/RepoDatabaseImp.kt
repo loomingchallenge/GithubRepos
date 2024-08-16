@@ -9,13 +9,12 @@ import com.githubrepos.framework.datasource.database.sqldelight.dao.ListRepoDaoI
 import com.githubrepos.framework.datasource.database.sqldelight.dao.RepoDaoImp
 import com.githubrepos.framework.datasource.database.sqldelight.dao.RepoPageDaoImp
 
+internal const val REPO_DATABASE_NAME = "DelightRepoDatabase.db"
+
 internal class RepoDatabaseImp(databaseDriverFactory: DatabaseDriverFactory, dispatchers: AppDispatchers): RepoDatabase {
 
     private val database = DelightRepoDatabase(
-        databaseDriverFactory.createDriver(
-            DelightRepoDatabase.Schema,
-            DelightRepoDatabase::class.simpleName!! + ".db"
-        )
+        databaseDriverFactory.createDriver(DelightRepoDatabase.Schema)
     )
     private val queries = database.delightRepoDatabaseQueries
 

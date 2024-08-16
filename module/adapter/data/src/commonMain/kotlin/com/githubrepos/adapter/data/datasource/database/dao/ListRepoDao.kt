@@ -1,6 +1,6 @@
 package com.githubrepos.adapter.data.datasource.database.dao
 
-import androidx.paging.PagingSource
+import app.cash.paging.PagingSource
 import com.githubrepos.core.entity.ListRepo
 
 interface ListRepoDao {

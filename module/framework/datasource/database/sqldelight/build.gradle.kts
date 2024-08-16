@@ -36,9 +36,17 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
+        }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.androidx.test.core)
+                implementation(libs.androidx.test.junit)
+                implementation(libs.robolectric)
+            }
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
@@ -48,6 +56,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.logback.classic)
         }
     }
 }
