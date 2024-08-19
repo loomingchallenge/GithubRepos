@@ -13,8 +13,8 @@ import com.githubrepos.framework.ui.navigation.destination.RepoDestination
 import com.githubrepos.framework.ui.navigation.destination.RepoListDestination
 import com.githubrepos.framework.ui.navigation.destination.getCurrentRoute
 import com.githubrepos.framework.ui.navigation.destination.navigateToRepoDestination
-import com.githubrepos.framework.ui.navigation.viewmodel.NavRepoListViewModel
-import com.githubrepos.framework.ui.navigation.viewmodel.NavRepoViewModel
+import com.githubrepos.framework.ui.navigation.viewmodel.RepoListVMProvider
+import com.githubrepos.framework.ui.navigation.viewmodel.RepoVMProvider
 import com.githubrepos.framework.ui.screens.components.TopBarController
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.framework.ui.screens.navigation.NavigationController
@@ -46,7 +46,7 @@ internal class NavigationControllerImp(
     ) {
         composable(route = RepoListDestination.route) {
             RepoListScreen(
-                repoListViewModel = viewModel { NavRepoListViewModel(viewModelProvider) },
+                repoListViewModel = viewModel { RepoListVMProvider(viewModelProvider) }.viewModel,
                 setTopBar = { topBar ->
                     topBarController.setTopBar(topBar, RepoListDestination.route, navController)
                 },
@@ -71,7 +71,7 @@ internal class NavigationControllerImp(
             val repoName = RepoDestination.getRepoName(it)
             if (repoID != null && repoName != null) {
                 RepoScreen(
-                    repoViewModel = viewModel { NavRepoViewModel(repoID, repoName, viewModelProvider) },
+                    repoViewModel = viewModel { RepoVMProvider(repoID, repoName, viewModelProvider) }.viewModel,
                     errorReporter = errorReporter,
                     setTopBar = { topBar ->
                         topBarController.setTopBar(topBar, RepoDestination.route, navController)
