@@ -2,7 +2,7 @@ package com.githubrepos.framework.ui.screens.theme
 
 import androidx.compose.ui.graphics.Color
 
-internal val GrayTransparent = Color(0x20000000)
+internal val GrayTransparent = Color(0x40000000)
 
 internal val Purple80 = Color(0xFFD0BCFF)
 internal val PurpleGrey80 = Color(0xFFCCC2DC)

@@ -41,7 +41,7 @@ internal fun createHttpClient(httpClientEngine: HttpClientEngine, areLogsEnabled
         if (areLogsEnabled) {
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.BODY // LogLevel.ALL
+                level = LogLevel.INFO // LogLevel.ALL
             }
         }
         defaultRequest {

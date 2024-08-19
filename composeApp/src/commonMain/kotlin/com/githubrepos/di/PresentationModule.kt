@@ -16,7 +16,7 @@ import org.koin.dsl.module
 
 val presentationModule = module {
     singleOf(::createErrorReporter)
-    factory { (scope: CoroutineScope) -> createRepoListViewModel(scope, get()) }
+    factory { (scope: CoroutineScope) -> createRepoListViewModel(scope, get(), get()) }
     factory { (repoID: Long, title: String, scope: CoroutineScope) -> createRepoViewModel(repoID, title, scope, get()) }
     singleOf(::ViewModelProviderImp)  { bind<ViewModelProvider>() }
 }

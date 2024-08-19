@@ -39,7 +39,11 @@ internal class NavigationControllerImp(
         }
     }
 
-    private fun NavGraphBuilder.addRepoListScreen(topBarController: TopBarController, viewModelProvider: ViewModelProvider, navController: NavHostController) {
+    private fun NavGraphBuilder.addRepoListScreen(
+        topBarController: TopBarController,
+        viewModelProvider: ViewModelProvider,
+        navController: NavHostController
+    ) {
         composable(route = RepoListDestination.route) {
             RepoListScreen(
                 repoListViewModel = viewModel { NavRepoListViewModel(viewModelProvider) },

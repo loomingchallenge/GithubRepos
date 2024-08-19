@@ -16,4 +16,12 @@ internal class NavRepoListViewModel(
 
     override val repositoryFlow: Flow<PagingData<ListRepo>>
         get() = viewModel.repositoryFlow
+
+    override suspend fun setRepositoryError(error: Throwable) {
+        viewModel.setRepositoryError(error)
+    }
+
+    override fun clearRepositoryError() {
+        viewModel.clearRepositoryError()
+    }
 }

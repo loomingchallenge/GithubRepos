@@ -12,9 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 
 fun createRepoListViewModel(
     scope: CoroutineScope,
-    searchRepository: SearchReposRepository
+    searchRepository: SearchReposRepository,
+    errorReporter: ErrorReporter
 ): RepoListViewModel {
-    return RepoListViewModelImp(scope, searchRepository)
+    return RepoListViewModelImp(scope, searchRepository, errorReporter)
 }
 
 fun createRepoViewModel(

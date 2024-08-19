@@ -59,7 +59,10 @@ fun RepoListScreen(
 ) {
     val listState = rememberLazyListState()
     val repositories = repoListViewModel.repositoryFlow.collectAsLazyPagingItems()
-    val onRefresh = { repositories.refresh() }
+    val onRefresh = {
+        repoListViewModel.clearRepositoryError()
+        repositories.refresh()
+    }
     val onRetry = { repositories.retry() }
     setTopBar {
         RepoListTopBar(onClickRefresh = {
@@ -81,6 +84,26 @@ fun RepoListScreen(
         PullRefreshIndicator(false, state, Modifier.align(Alignment.TopCenter))
     }
 }
+// Alternative code which after bad refresh shows old list (repositories.loadState.refresh is LoadState.Error).
+// It does not work well with Google Paging library. Append retry button can disappear.
+//is LoadState.Loading -> {
+//    if (repositories.itemCount == 0) {
+//        ProgressIndicator(Modifier.align(Alignment.Center))
+//    } else {
+//        RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
+//        ProgressIndicatorInBox()
+//    }
+//}
+//is LoadState.Error -> {
+//    if (repositories.itemCount == 0) {
+//        RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), loadState.error, onRefresh)
+//    } else {
+//        RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
+//        LaunchedEffect(loadState.error) {
+//            repoListViewModel.setRepositoryError(loadState.error)
+//        }
+//    }
+//}
 
 @Composable
 internal fun RepoListTopBar(onClickRefresh: () -> Unit = {}) {
@@ -174,7 +197,8 @@ internal fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit =
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = listRepo.description ?: ""
+            text = listRepo.description ?: "",
+            maxLines = 10
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(Modifier.padding(top = 12.dp)) {

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 
-private const val NETWORK_PAGE_SIZE = 10 //30
+private const val NETWORK_PAGE_SIZE = 30
 
 internal class SearchReposRepositoryImp(
     private val service: GithubService,
@@ -37,9 +37,7 @@ internal class SearchReposRepositoryImp(
                 dispatchers
             ),
             pagingSourceFactory = pagingSourceFactory
-        )
-            .flow
-            .onStart {
+        ).flow.onStart {
                 if (preferences.query != query) {
                     preferences.query = query
                     withContext(dispatchers.io) {
