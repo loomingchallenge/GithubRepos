@@ -3,12 +3,12 @@ package com.githubrepos.framework.datasource.database.sqldelight
 import app.cash.paging.PagingSourceLoadParamsRefresh
 import app.cash.paging.PagingSourceLoadResult
 import app.cash.paging.PagingSourceLoadResultPage
-import com.githubrepos.core.TestAppDispatchers
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.entity.Repo
-import com.githubrepos.core.entity.repoExample
-import com.githubrepos.core.entity.repoPageExample
-import com.githubrepos.core.entity.repoPageExample2
+import com.githubrepos.core.test.TestAppDispatchers
+import com.githubrepos.core.test.repo0
+import com.githubrepos.core.test.repoPage0
+import com.githubrepos.core.test.repoPage1
 import com.githubrepos.framework.datasource.database.sqldelight.di.createRepoDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -41,23 +41,23 @@ internal open class RepoDatabaseTest(databaseDriverFactory: DatabaseDriverFactor
 
         val repos = mutableListOf<Repo?>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            repoDao.getRepo(repoExample.id).toList(repos)
+            repoDao.getRepo(repo0.id).toList(repos)
         }
         assertEquals(0, repos.size)
 
-        repoDao.insert(repoExample)
+        repoDao.insert(repo0)
         yield()
-        assertEquals(repoExample, repos[0])
+        assertEquals(repo0, repos[0])
 
-        val repoExampleMod =   repoExample.copy(name = "Modified")
+        val repoExampleMod =   repo0.copy(name = "Modified")
         repoDao.insert(repoExampleMod)
         yield()
         assertEquals(repoExampleMod, repos[1])
 
-        repoDao.delete(repoExample.id)
+        repoDao.delete(repo0.id)
         yield()
         assertNull(repos[2])
-        assertNull(repoDao.getRepo(repoExample.id).first())
+        assertNull(repoDao.getRepo(repo0.id).first())
 
         repoDao.deleteAll()
         assertNull(repoDao.getRepo(repoExampleMod.id).first())
@@ -68,13 +68,13 @@ internal open class RepoDatabaseTest(databaseDriverFactory: DatabaseDriverFactor
         val repoPageDao = repoDatabase.repoPageDao
         repoPageDao.deleteAll()
 
-        repoPageDao.insert(listOf(repoPageExample, repoPageExample2))
-        assertEquals(repoPageExample, repoPageDao.getRepoPage(repoPageExample.repoId))
-        assertEquals(repoPageExample2, repoPageDao.getRepoPage(repoPageExample2.repoId))
+        repoPageDao.insert(listOf(repoPage0, repoPage1))
+        assertEquals(repoPage0, repoPageDao.getRepoPage(repoPage0.repoId))
+        assertEquals(repoPage1, repoPageDao.getRepoPage(repoPage1.repoId))
 
         repoPageDao.deleteAll()
-        assertNull(repoPageDao.getRepoPage(repoPageExample.repoId))
-        assertNull(repoPageDao.getRepoPage(repoPageExample2.repoId))
+        assertNull(repoPageDao.getRepoPage(repoPage0.repoId))
+        assertNull(repoPageDao.getRepoPage(repoPage1.repoId))
     }
 
     @Test

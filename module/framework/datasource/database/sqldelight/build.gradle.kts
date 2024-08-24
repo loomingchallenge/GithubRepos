@@ -35,6 +35,7 @@ kotlin {
             implementation(libs.sqldelight.paging3)
         }
         commonTest.dependencies {
+            implementation(project(":module:adapter:data_test"))
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }

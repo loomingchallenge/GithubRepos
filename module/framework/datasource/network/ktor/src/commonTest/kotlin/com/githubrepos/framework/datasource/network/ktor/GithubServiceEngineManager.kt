@@ -1,16 +1,17 @@
 package com.githubrepos.framework.datasource.network.ktor
 
 import com.githubrepos.adapter.data.datasource.network.BASE_URL
+import com.githubrepos.adapter.data.test.repoJSON
+import com.githubrepos.adapter.data.test.repos1_2JSON
 import com.githubrepos.framework.datasource.network.ktor.service.getRepoPath
 import com.githubrepos.framework.datasource.network.ktor.service.getSearchReposPath
-import com.goncalossilva.resources.Resource
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 
-class GithubServiceEngineProvider {
+class GithubServiceEngineManager {
 
     var hasNetworkConnection = true
 
@@ -25,14 +26,14 @@ class GithubServiceEngineProvider {
             when(request.url.toString()) {
                 "$BASE_URL${getRepoPath(31792824)}" -> {
                     respond(
-                        content = Resource("src/commonTest/resources/files/repo.json").readText(),
+                        content = repoJSON,
                         status = HttpStatusCode.OK,
                         headers = responseHeaders
                     )
                 }
                 "$BASE_URL${getSearchReposPath()}&q=&page=1&per_page=2" -> {
                     respond(
-                        content = Resource("src/commonTest/resources/files/repos.json").readText(),
+                        content = repos1_2JSON,
                         status = HttpStatusCode.OK,
                         headers = responseHeaders
                     )

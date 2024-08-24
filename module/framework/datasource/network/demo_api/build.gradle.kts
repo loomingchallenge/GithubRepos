@@ -33,14 +33,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
+            implementation(project(":module:adapter:data_test"))
 
             // Kotlin serialization
             implementation(libs.kotlinx.serialization)
             implementation(libs.gson)
-
-            // Compose
-            implementation(compose.runtime)
-            implementation(compose.components.resources)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

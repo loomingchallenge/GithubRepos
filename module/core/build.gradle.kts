@@ -30,7 +30,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.paging.common)
-            implementation(libs.kotlinx.coroutines.test)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

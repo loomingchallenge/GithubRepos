@@ -20,7 +20,9 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":module:core")
+include(":module:core_test")
 include(":module:adapter:data")
+include(":module:adapter:data_test")
 include(":module:adapter:presentation")
 include(":module:framework:datasource:network:demo_api")
 include(":module:framework:datasource:network:ktor")

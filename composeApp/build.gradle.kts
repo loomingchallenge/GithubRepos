@@ -1,3 +1,4 @@
+import com.githubrepos.build.isTestTask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -9,8 +10,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-val FLAVOR_FULL = "Full"
-val FLAVOR_DEMO = "Demo"
+object Flavor {
+    const val FULL = "Full"
+    const val DEMO = "Demo"
+}
 
 fun Project.getFlavorName(): String? {
     val taskRequests = gradle.startParameter.taskRequests.toString()
@@ -23,14 +26,15 @@ val androidFlavor = project.getFlavorName()
 
 val envFlavor: String? = System.getenv("FLAVOR")
 
-val flavor = if (envFlavor == FLAVOR_FULL || androidFlavor == FLAVOR_FULL) {
-    FLAVOR_FULL
-} else if (envFlavor == FLAVOR_DEMO || androidFlavor == FLAVOR_DEMO) {
-    FLAVOR_DEMO
+val flavor = if (envFlavor == Flavor.FULL || androidFlavor == Flavor.FULL) {
+    Flavor.FULL
+} else if (envFlavor == Flavor.DEMO || androidFlavor == Flavor.DEMO) {
+    Flavor.DEMO
 } else {
     null
 }
-println("flavor: $flavor")
+println("Flavor: $flavor")
+println("Test task: ${project.isTestTask()}")
 
 kotlin {
 
@@ -64,7 +68,7 @@ kotlin {
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))
 
-            if (flavor == FLAVOR_FULL) {
+            if (flavor == Flavor.FULL) {
                 implementation(project(":module:flavor:full"))
             } else {
                 implementation(project(":module:flavor:demo"))
@@ -158,15 +162,15 @@ android {
     }
     flavorDimensions.add("default")
     productFlavors {
-        create(FLAVOR_FULL) {
+        create(Flavor.FULL) {
             dimension = "default"
-            applicationIdSuffix = ".$FLAVOR_FULL"
-            versionNameSuffix = "-$FLAVOR_FULL"
+            applicationIdSuffix = ".${Flavor.FULL}"
+            versionNameSuffix = "-${Flavor.FULL}"
         }
-        create(FLAVOR_DEMO) {
+        create(Flavor.DEMO) {
             dimension = "default"
-            applicationIdSuffix = ".$FLAVOR_DEMO"
-            versionNameSuffix = "-$FLAVOR_DEMO"
+            applicationIdSuffix = ".${Flavor.DEMO}"
+            versionNameSuffix = "-${Flavor.DEMO}"
         }
     }
 }

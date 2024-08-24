@@ -3,7 +3,7 @@ package com.githubrepos.framework.ui.screens.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import com.githubrepos.core.entity.repoExample
+import com.githubrepos.core.test.repo0
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 
 // Preview with compose resource does not work in Android Studio because of bug. It could work in Fleet.
@@ -14,7 +14,7 @@ import com.githubrepos.framework.ui.screens.theme.MainTheme
 @Composable
 internal fun RepoPreview() {
     MainTheme {
-        Repo(repoExample)
+        Repo(repo0)
     }
 }
 

@@ -73,6 +73,7 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+        debugImplementation(project(":module:core_test")) // for android compose previews
     }
     buildFeatures {
         compose = true

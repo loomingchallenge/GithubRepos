@@ -37,6 +37,8 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(project(":module:framework:datasource:network:demo_api"))
         }
     }
 }

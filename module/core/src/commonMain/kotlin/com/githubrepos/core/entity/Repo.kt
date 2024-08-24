@@ -15,31 +15,3 @@ data class Repo(
 )
 
 fun Repo.toListRepo() = ListRepo(id, name, fullName, description, stars, forks, language)
-
-val repoExample = Repo(
-    31792824,
-    "flutter",
-    "flutter/flutter",
-    "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
-    "https://github.com/flutter",
-    "https://flutter.dev",
-    "https://github.com/flutter/flutter.git",
-    "https://api.github.com/repos/flutter/flutter/deployments",
-    155489,
-    25786,
-    "Dart"
-)
-
-val repoExample2 = Repo(
-    29028775,
-    "react-native",
-    "facebook/react-native",
-    "A framework for building native applications using React",
-    "https://github.com/facebook/react-native",
-    "https://reactnative.dev",
-    "https://github.com/facebook/react-native.git",
-    "https://api.github.com/repos/facebook/react-native/deployments",
-    113772,
-    24144,
-    "C++"
-)

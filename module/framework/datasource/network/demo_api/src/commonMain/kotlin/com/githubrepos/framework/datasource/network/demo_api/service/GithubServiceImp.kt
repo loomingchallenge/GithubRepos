@@ -4,11 +4,10 @@ import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.datasource.network.entity.RepositorySearchResponse
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
+import com.githubrepos.adapter.data.test.reposJSON
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.framework.datasource.network.demo_api.entity.DemoRepositorySearchResponse
-import githubrepos.module.framework.datasource.network.demo_api.generated.resources.Res.readBytes
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 internal class GithubServiceImp(private val networkStateProvider: NetworkStateProvider): GithubService {
 
@@ -32,15 +31,12 @@ internal class GithubServiceImp(private val networkStateProvider: NetworkStatePr
         }
     }
 
-    @OptIn(ExperimentalResourceApi::class)
-    private suspend fun getDemoResponse(): DemoRepositorySearchResponse {
+    private fun getDemoResponse(): DemoRepositorySearchResponse {
         if (response == null) {
-            val bytes = readBytes("files/repos.json")
-            val str = bytes.decodeToString()
             val json = Json {
                 ignoreUnknownKeys = true
             }
-            response = json.decodeFromString<DemoRepositorySearchResponse>(str)
+            response = json.decodeFromString<DemoRepositorySearchResponse>(reposJSON)
         }
         return response as DemoRepositorySearchResponse
     }

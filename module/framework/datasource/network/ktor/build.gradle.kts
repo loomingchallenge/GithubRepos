@@ -1,13 +1,12 @@
+import com.githubrepos.build.isTestTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    // TODO Add resources when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
-    // alias(libs.plugins.composeMultiplatform)
-    // alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinxResources)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
 }
 
@@ -36,6 +35,14 @@ kotlin {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
 
+            // TODO Remove isTestTask and move to commonTest when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
+            if (isTestTask()) {
+                implementation(project(":module:adapter:data_test"))
+            }
+
+            // Compose
+            api(compose.runtime)
+
             // Kotlin serialization
             implementation(libs.kotlinx.serialization)
 
@@ -51,11 +58,6 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.ktor.client.mock)
             implementation(libs.kotlinx.coroutines.test)
-
-            // TODO Add resources when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
-            // implementation(compose.runtime)
-            // implementation(compose.components.resources)
-            implementation(libs.kotlinx.resources)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
