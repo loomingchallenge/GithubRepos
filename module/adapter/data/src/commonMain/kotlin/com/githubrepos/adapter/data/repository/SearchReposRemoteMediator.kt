@@ -4,7 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.githubrepos.adapter.data.datasource.database.RepoDatabase
+import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
+import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
+import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
 import com.githubrepos.core.AppDispatchers
 import com.githubrepos.core.entity.ListRepo
@@ -21,7 +23,9 @@ private const val NEXT_PAGE_CANNOT_BE_FOUND = -2
 internal class SearchReposRemoteMediator(
     private val query: String,
     private val service: GithubService,
-    private val repoDatabase: RepoDatabase,
+    private val listRepoDao: ListRepoDao,
+    private val repoPageDao: RepoPageDao,
+    private val dbWithTransaction: DBWithTransaction,
     private val dispatchers: AppDispatchers
 ) : RemoteMediator<Int, ListRepo>() {
 
@@ -53,17 +57,17 @@ internal class SearchReposRemoteMediator(
 
     private suspend fun loadPage(loadType: LoadType, state: PagingState<Int, ListRepo>, page: Int) {
         val response = service.searchRepos(query, page, state.config.pageSize)
-        repoDatabase.withTransaction {
+        dbWithTransaction.withTransaction {
             if (loadType == LoadType.REFRESH) {
-                repoDatabase.listRepoDao.deleteAll()
-                repoDatabase.repoPageDao.deleteAll()
+                listRepoDao.deleteAll()
+                repoPageDao.deleteAll()
             }
             if (response.items.isNotEmpty()) {
-                repoDatabase.listRepoDao.insert(response.items)
+                listRepoDao.insert(response.items)
                 val repoPages = response.items.map {
                     RepoPage(it.id, page)
                 }
-                repoDatabase.repoPageDao.insert(repoPages)
+                repoPageDao.insert(repoPages)
             } else {
                 lastPage = page - 1
             }
@@ -101,21 +105,21 @@ internal class SearchReposRemoteMediator(
     private fun getPageClosestToCurrentPosition(state: PagingState<Int, ListRepo>): Int? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { repositoryId ->
-                repoDatabase.repoPageDao.getRepoPage(repositoryId)?.page
+                repoPageDao.getRepoPage(repositoryId)?.page
             }
         }
     }
 
     private fun getPageForFirstItem(state: PagingState<Int, ListRepo>): Int {
         state.pages.first { it.data.isNotEmpty() }.data.first().let { repository ->
-            return repoDatabase.repoPageDao.getRepoPage(repository.id)?.page
+            return repoPageDao.getRepoPage(repository.id)?.page
                 ?: NEXT_PAGE_CANNOT_BE_FOUND
         }
     }
 
     private fun getPageKeyForLastItem(state: PagingState<Int, ListRepo>): Int {
         state.pages.last { it.data.isNotEmpty() }.data.last().let { repository ->
-            return repoDatabase.repoPageDao.getRepoPage(repository.id)?.page
+            return repoPageDao.getRepoPage(repository.id)?.page
                 ?: NEXT_PAGE_CANNOT_BE_FOUND
         }
     }

@@ -1,4 +1,4 @@
-package com.githubrepos.framework.datasource.network.demo_api.entity
+package com.githubrepos.adapter.data.test.datasource.network.entity
 
 import com.githubrepos.adapter.data.datasource.network.entity.RepositorySearchResponse
 import com.githubrepos.core.entity.Repo
@@ -7,9 +7,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class DemoRepositorySearchResponse(
+internal data class FakeRepositorySearchResponse(
     @SerialName("total_count") val total: Int,
-    @SerialName("items") val items: List<DemoRepo>
+    @SerialName("items") val items: List<FakeRepo>
 ) {
 
     fun getPageData(page: Int, itemsPerPage: Int): RepositorySearchResponse {

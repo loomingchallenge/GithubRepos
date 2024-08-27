@@ -1,11 +1,11 @@
-package com.githubrepos.framework.datasource.network.demo_api.entity
+package com.githubrepos.adapter.data.test.datasource.network.entity
 
 import com.githubrepos.core.entity.Repo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class DemoRepo(
+internal data class FakeRepo(
     @SerialName("id") val id: Long,
     @SerialName("name") val name: String,
     @SerialName("full_name") val fullName: String,
@@ -19,6 +19,6 @@ internal data class DemoRepo(
     @SerialName("language") val language: String?
 )
 
-internal fun DemoRepo.toRepo(): Repo {
+internal fun FakeRepo.toRepo(): Repo {
     return Repo(id, name, fullName, description, url, homepage, cloneUrl, deploymentsUrl, stars, forks, language)
 }

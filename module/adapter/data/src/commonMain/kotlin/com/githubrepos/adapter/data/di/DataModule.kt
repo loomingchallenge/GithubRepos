@@ -1,7 +1,10 @@
 package com.githubrepos.adapter.data.di
 
+import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
 import com.githubrepos.adapter.data.datasource.database.RepoDatabase
+import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
+import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
 import com.githubrepos.adapter.data.datasource.preferences.RepoPreferences
@@ -21,10 +24,12 @@ fun createRepoRepository(
 
 fun createSearchReposRepository(
     service: GithubService,
-    database: RepoDatabase,
+    listRepoDao: ListRepoDao,
+    repoPageDao: RepoPageDao,
+    dbWithTransaction: DBWithTransaction,
     preferences: RepoPreferences,
-    dispatchers: AppDispatchers
+    dispatchers: AppDispatchers,
 ): SearchReposRepository {
-    return SearchReposRepositoryImp(service, database, preferences, dispatchers)
+    return SearchReposRepositoryImp(service, listRepoDao, repoPageDao, dbWithTransaction, preferences, dispatchers)
 }
 

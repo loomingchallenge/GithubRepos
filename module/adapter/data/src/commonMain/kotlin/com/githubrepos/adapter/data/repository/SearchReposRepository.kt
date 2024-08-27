@@ -4,7 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.githubrepos.adapter.data.datasource.database.RepoDatabase
+import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
+import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
+import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
 import com.githubrepos.adapter.data.datasource.preferences.RepoPreferences
 import com.githubrepos.core.AppDispatchers
@@ -18,14 +20,16 @@ private const val NETWORK_PAGE_SIZE = 30
 
 internal class SearchReposRepositoryImp(
     private val service: GithubService,
-    private val database: RepoDatabase,
+    private val listRepoDao: ListRepoDao,
+    private val repoPageDao: RepoPageDao,
+    private val dbWithTransaction: DBWithTransaction,
     private val preferences: RepoPreferences,
-    private val dispatchers: AppDispatchers
+    private val dispatchers: AppDispatchers,
 ) : SearchReposRepository {
 
     override fun getRepositoryFlow(query: String): Flow<PagingData<ListRepo>> {
         val dbQuery = "%${query.replace(' ', '%')}%"
-        val pagingSourceFactory = { database.listRepoDao.getListRepos() }
+        val pagingSourceFactory = { listRepoDao.getListRepos() }
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
@@ -33,7 +37,9 @@ internal class SearchReposRepositoryImp(
             remoteMediator = SearchReposRemoteMediator(
                 query,
                 service,
-                database,
+                listRepoDao,
+                repoPageDao,
+                dbWithTransaction,
                 dispatchers
             ),
             pagingSourceFactory = pagingSourceFactory
@@ -41,9 +47,9 @@ internal class SearchReposRepositoryImp(
                 if (preferences.query != query) {
                     preferences.query = query
                     withContext(dispatchers.io) {
-                        database.withTransaction {
-                            database.listRepoDao.deleteAll()
-                            database.repoPageDao.deleteAll()
+                        dbWithTransaction.withTransaction {
+                            listRepoDao.deleteAll()
+                            repoPageDao.deleteAll()
                         }
                     }
                 }

@@ -1,8 +1,8 @@
-package com.githubrepos.framework.datasource.network.demo_api
+package com.githubrepos.adapter.data.test.datasource.network
 
 import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 
-class NetworkStateProviderImp : NetworkStateProvider {
+class FakeNetworkStateProvider : NetworkStateProvider {
 
     var hasNetworkConnection = true
 

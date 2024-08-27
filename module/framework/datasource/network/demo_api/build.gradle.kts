@@ -4,9 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -34,14 +31,6 @@ kotlin {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
             implementation(project(":module:adapter:data_test"))
-
-            // Kotlin serialization
-            implementation(libs.kotlinx.serialization)
-            implementation(libs.gson)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }

@@ -1,24 +1,24 @@
-package com.githubrepos.framework.datasource.network.demo_api
+package com.githubrepos.adapter.data
 
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
+import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkServiceProvider
+import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
 import com.githubrepos.adapter.data.test.repoCountInJSON
 import com.githubrepos.core.entity.toListRepo
 import com.githubrepos.core.test.repo0
 import com.githubrepos.core.test.repo1
 import com.githubrepos.core.test.repo48
 import com.githubrepos.core.test.repo49
-import com.githubrepos.framework.datasource.network.demo_api.di.createGithubService
-import com.githubrepos.framework.datasource.network.demo_api.di.createNetworkServiceProvider
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class GithubServiceTest {
+class FakeGithubServiceTest {
 
-    private val networkStateProvider = NetworkStateProviderImp()
-    private val networkServiceProvider = createNetworkServiceProvider(networkStateProvider)
-    private val githubService = createGithubService(networkServiceProvider)
+    private val networkStateProvider = FakeNetworkStateProvider()
+    private val networkServiceProvider = FakeNetworkServiceProvider(networkStateProvider)
+    private val githubService = networkServiceProvider.createGithubService()
 
     @Test
     fun getRepo() = runTest {

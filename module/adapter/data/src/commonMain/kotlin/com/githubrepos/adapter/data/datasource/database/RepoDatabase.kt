@@ -4,13 +4,11 @@ import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 
-interface RepoDatabase {
+interface RepoDatabase: DBWithTransaction {
 
     val repoDao: RepoDao
 
     val listRepoDao: ListRepoDao
 
     val repoPageDao: RepoPageDao
-
-    fun <R> withTransaction(block: () -> R): R
 }
