@@ -28,6 +28,34 @@ val repo0 by lazy { Repo(
     "Dart"
 ) }
 
+val repo0Old by lazy { Repo(
+    31792824,
+    "flutter",
+    "flutter/flutter",
+    "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
+    "https://github.com/flutter/flutter",
+    "https://flutter.dev",
+    "https://github.com/flutter/flutter.git",
+    "https://api.github.com/repos/flutter/flutter/deployments",
+    146377,
+    24647,
+    "Dart"
+) }
+
+val repo0New by lazy { Repo(
+    31792824,
+    "flutter",
+    "flutter/flutter",
+    "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
+    "https://github.com/flutter/flutter",
+    "https://flutter.dev",
+    "https://github.com/flutter/flutter.git",
+    "https://api.github.com/repos/flutter/flutter/deployments",
+    174586,
+    28749,
+    "Dart"
+) }
+
 val repo1 by lazy { Repo(
     29028775,
     "react-native",

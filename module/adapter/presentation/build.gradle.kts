@@ -32,7 +32,10 @@ kotlin {
             api(project(":module:core"))
         }
         commonTest.dependencies {
+            implementation(project(":module:adapter:data_test"))
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
         }
     }
 }
