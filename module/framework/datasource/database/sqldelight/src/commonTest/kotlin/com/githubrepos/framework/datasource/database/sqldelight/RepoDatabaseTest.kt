@@ -3,6 +3,7 @@ package com.githubrepos.framework.datasource.database.sqldelight
 import app.cash.paging.PagingSourceLoadParamsRefresh
 import app.cash.paging.PagingSourceLoadResult
 import app.cash.paging.PagingSourceLoadResultPage
+import com.githubrepos.adapter.data.datasource.database.RepoDatabase
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.core.test.TestAppDispatchers
@@ -18,6 +19,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,10 +31,20 @@ import kotlin.test.assertTrue
 internal const val TEST_REPO_DATABASE_NAME = "TEST$REPO_DATABASE_NAME"
 
 @Ignore
-internal open class RepoDatabaseTest(databaseDriverFactory: DatabaseDriverFactory) {
+internal open class RepoDatabaseTest(private val databaseDriverFactory: DatabaseDriverFactory) {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val repoDatabase = createRepoDatabase(databaseDriverFactory, TestAppDispatchers(testDispatcher))
+    private lateinit var repoDatabase: RepoDatabase
+
+    @BeforeTest
+    fun setUp() {
+        repoDatabase = createRepoDatabase(databaseDriverFactory, TestAppDispatchers(testDispatcher))
+    }
+
+    @AfterTest
+    fun tearDown() {
+        repoDatabase.close()
+    }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)

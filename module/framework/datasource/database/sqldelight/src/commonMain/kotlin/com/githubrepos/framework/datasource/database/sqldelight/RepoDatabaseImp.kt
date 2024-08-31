@@ -13,10 +13,9 @@ internal const val REPO_DATABASE_NAME = "DelightRepoDatabase.db"
 
 internal class RepoDatabaseImp(databaseDriverFactory: DatabaseDriverFactory, dispatchers: AppDispatchers): RepoDatabase {
 
-    private val database = DelightRepoDatabase(
-        databaseDriverFactory.createDriver(DelightRepoDatabase.Schema)
-    )
-    private val queries = database.delightRepoDatabaseQueries
+    private val driver = databaseDriverFactory.createDriver(DelightRepoDatabase.Schema)
+
+    private val queries = DelightRepoDatabase(driver).delightRepoDatabaseQueries
 
     override val repoDao: RepoDao = RepoDaoImp(queries, dispatchers)
 
@@ -28,5 +27,9 @@ internal class RepoDatabaseImp(databaseDriverFactory: DatabaseDriverFactory, dis
         return queries.transactionWithResult {
             block()
         }
+    }
+
+    override fun close() {
+        driver.close()
     }
 }

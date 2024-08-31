@@ -40,7 +40,6 @@ kotlin {
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             // Paging
@@ -49,16 +48,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        androidMain.dependencies {
-            // Compose
-            implementation(libs.compose.ui.tooling.preview)
-        }
     }
-}
-
-compose.resources {
-    publicResClass = true
-    generateResClass = always
 }
 
 android {
@@ -70,10 +60,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    dependencies {
-        debugImplementation(libs.compose.ui.tooling)
-        debugImplementation(project(":module:core_test")) // for android compose previews
     }
     buildFeatures {
         compose = true

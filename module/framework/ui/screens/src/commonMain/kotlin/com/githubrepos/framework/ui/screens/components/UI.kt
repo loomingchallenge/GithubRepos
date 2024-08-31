@@ -44,7 +44,7 @@ fun UI(navigationController: NavigationController) {
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-internal fun Error(errorReporter: ErrorReporter) {
+fun Error(errorReporter: ErrorReporter) {
     val errorData by errorReporter.error.collectAsState() // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
     errorData?.let { error ->
         val snackbarData = object : SnackbarData {

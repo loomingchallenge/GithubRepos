@@ -124,7 +124,7 @@ internal fun RepoTopBar(title: String?, onBack: () -> Unit) {
 }
 
 @Composable
-internal fun Repo(repo: Repo) {
+fun Repo(repo: Repo) {
     Column(
         Modifier
             .padding(12.dp)

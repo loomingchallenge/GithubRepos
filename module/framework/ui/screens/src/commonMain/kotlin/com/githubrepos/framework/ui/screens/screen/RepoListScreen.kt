@@ -183,7 +183,7 @@ internal fun RepositoryDivider() {
 }
 
 @Composable
-internal fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
+fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
     Column(Modifier
         .clickable {
             onRepoItem(listRepo)

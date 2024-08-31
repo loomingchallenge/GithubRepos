@@ -60,7 +60,7 @@ internal fun getPullRefreshState(refreshing: MutableState<RefreshState>, isLoadi
 }
 
 @Composable
-internal fun ProgressIndicatorInBox(
+fun ProgressIndicatorInBox(
     modifier: Modifier = Modifier,
     color: Color = Color.White,
     backgroundColor: Color = GrayTransparent
@@ -81,7 +81,7 @@ internal fun ProgressIndicatorInBox(
 }
 
 @Composable
-internal fun ProgressIndicator(
+fun ProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = LightGray
 ) {
@@ -93,7 +93,7 @@ internal fun ProgressIndicator(
 }
 
 @Composable
-internal fun SmallProgressIndicator(
+fun SmallProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = LightGray
 ) {
@@ -108,7 +108,7 @@ internal fun SmallProgressIndicator(
 }
 
 @Composable
-internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: () -> Unit) {
+fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: () -> Unit) {
     Column(
         Modifier
             .padding(8.dp)
