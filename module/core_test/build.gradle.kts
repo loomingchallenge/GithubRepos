@@ -38,7 +38,6 @@ kotlin {
 }
 
 android {
-
     namespace = "com.githubrepos.core.test"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {

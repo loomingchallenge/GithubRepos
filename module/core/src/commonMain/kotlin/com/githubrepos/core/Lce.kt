@@ -21,7 +21,11 @@ fun <T> flowLce(func: suspend () -> T): Flow<Lce<out T>> = flow {
     emit(Lce.Error(e))
 }
 
-fun <T1, T2, R> combineLCE(flow1: Flow<Lce<out T1>>, flow2: Flow<Lce<out T2>>, transform: suspend (a: T1, b: T2) -> R): Flow<Lce<out R>> {
+fun <T1, T2, R> combineLCE(
+    flow1: Flow<Lce<out T1>>,
+    flow2: Flow<Lce<out T2>>,
+    transform: suspend (a: T1, b: T2) -> R
+): Flow<Lce<out R>> {
     return flow1.combine(flow2) { lce1: Lce<out T1>, lce2: Lce<out T2> ->
         if (lce1 is Lce.Error) {
             lce1

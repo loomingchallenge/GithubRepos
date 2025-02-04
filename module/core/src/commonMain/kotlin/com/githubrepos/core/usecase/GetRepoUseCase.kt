@@ -9,7 +9,7 @@ interface GetRepoUseCase {
     fun execute(id: Long, freshDataOnly: Boolean = false): Flow<Lce<out Repo>>
 }
 
-class GetRepoUseCaseImp(
+internal class GetRepoUseCaseImp(
     private val repoRepository: RepoRepository
 ) : GetRepoUseCase {
 
