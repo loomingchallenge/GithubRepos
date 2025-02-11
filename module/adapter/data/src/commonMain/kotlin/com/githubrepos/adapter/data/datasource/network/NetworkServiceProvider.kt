@@ -6,9 +6,10 @@ const val BASE_URL = "https://api.github.com/"
 
 const val HOST_NAME_PATTERN = "*.github.com"
 
-// SHA-256 Public Key Pin
-// Valid until Fri, 07 Mar 2025 23:59:59 UTC
-const val PUBLIC_KEY_PIN = "sha256/lmo8/KPXoMsxI+J9hY+ibNm2r0IYChmOsF9BxD74PVc="
+// EC 256 bits (SHA256withECDSA)
+// https://www.ssllabs.com/ssltest/analyze.html?d=api.github.com
+// Valid until 	Thu, 05 Feb 2026 23:59:59 UTC
+const val PUBLIC_KEY_PIN = "sha256/1EkvzibgiE3k+xdsv+7UU5vhV8kdFCQiUiFdMX5Guuk="
 
 interface NetworkServiceProvider {
 

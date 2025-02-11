@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface RepoListViewModel {
 
+    val isPullRefreshSupported: Boolean
+
     val repositoryFlow: Flow<PagingData<ListRepo>>
 
     suspend fun setRepositoryError(error: Throwable)
@@ -20,7 +22,8 @@ interface RepoListViewModel {
 internal class RepoListViewModelImp(
     scope: CoroutineScope,
     searchRepository: SearchReposRepository,
-    private val errorReporter: ErrorReporter
+    private val errorReporter: ErrorReporter,
+    override val isPullRefreshSupported: Boolean
 ) : RepoListViewModel {
 
     private var repositoryError: Throwable? = null

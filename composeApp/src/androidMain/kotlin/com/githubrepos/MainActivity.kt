@@ -15,6 +15,7 @@ class MainActivity : ComponentActivity() {
     private val errorReporter: ErrorReporter by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, false)
         super.onCreate(savedInstanceState)
 
         setContent {

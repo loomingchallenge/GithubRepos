@@ -2,6 +2,7 @@ package com.githubrepos.framework.ui.screens.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -70,20 +71,47 @@ fun RepoListScreen(
         })
     }
 
-    val state = getPullRefreshState(repositories, onRefresh)
-    Box(
-        Modifier
-            .fillMaxSize()
-            .pullRefresh(state)
-    ) {
-        when (val loadState = repositories.loadState.refresh) {
-            is LoadState.Loading -> ProgressIndicator(Modifier.align(Alignment.Center))
-            is LoadState.Error -> RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), loadState.error, onRefresh)
-            is LoadState.NotLoading -> RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
+    val modifier = Modifier.fillMaxSize()
+    if (repoListViewModel.isPullRefreshSupported) {
+        val state = getPullRefreshState(repositories, onRefresh)
+        Box(modifier.then(Modifier.pullRefresh(state))) {
+            RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
+            PullRefreshIndicator(false, state, Modifier.align(Alignment.TopCenter))
         }
-        PullRefreshIndicator(false, state, Modifier.align(Alignment.TopCenter))
+    } else {
+        Box(modifier) {
+            RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
+        }
     }
 }
+
+@Composable
+fun BoxScope.RepoListWithErrors(
+    refreshLoadState: LoadState,
+    onRefresh: () -> Unit,
+    repositories: LazyPagingItems<ListRepo>,
+    listState: LazyListState,
+    onRetry: () -> Unit,
+    onRepoItem: (ListRepo) -> Unit
+) {
+    when (refreshLoadState) {
+        is LoadState.Loading -> ProgressIndicator(Modifier.align(Alignment.Center))
+
+        is LoadState.Error -> RetryButton(
+            Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()),
+            refreshLoadState.error,
+            onRefresh
+        )
+
+        is LoadState.NotLoading -> RepositoryList(
+            repositories,
+            listState,
+            onRetry = onRetry,
+            onRepoItem
+        )
+    }
+}
+
 // Alternative code which after bad refresh shows old list (repositories.loadState.refresh is LoadState.Error).
 // It does not work well with Google Paging library. Append retry button can disappear.
 //is LoadState.Loading -> {

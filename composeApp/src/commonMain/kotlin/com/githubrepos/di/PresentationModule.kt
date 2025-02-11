@@ -14,9 +14,9 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
-val presentationModule = module {
+fun createPresentationModule(isPullRefreshSupported: Boolean) = module {
     singleOf(::createErrorReporter)
-    factory { (scope: CoroutineScope) -> createRepoListViewModel(scope, get(), get()) }
+    factory { (scope: CoroutineScope) -> createRepoListViewModel(scope, get(), get(), isPullRefreshSupported) }
     factory { (repoID: Long, title: String, scope: CoroutineScope) -> createRepoViewModel(repoID, title, scope, get()) }
     singleOf(::ViewModelProviderImp)  { bind<ViewModelProvider>() }
 }

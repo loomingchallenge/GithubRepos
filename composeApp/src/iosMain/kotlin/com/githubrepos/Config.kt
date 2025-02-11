@@ -7,4 +7,6 @@ actual object Config {
 
     @OptIn(ExperimentalNativeApi::class)
     actual val isDebug: Boolean = Platform.isDebugBinary
+
+    actual val isPullRefreshSupported = true
 }

@@ -9,7 +9,7 @@ fun appModule() = module {
         coreModule,
         dataModule,
         sqlModule,
-        presentationModule,
+        createPresentationModule(Config.isPullRefreshSupported),
         uiModule,
         navigationModule,
         *createFlavorModules(Config.isDebug).toTypedArray()
