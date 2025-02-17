@@ -62,7 +62,7 @@ internal open class RepoDatabaseTest(private val databaseDriverFactory: Database
         yield()
         assertEquals(repo0, repos[0])
 
-        val repoExampleMod =   repo0.copy(name = "Modified")
+        val repoExampleMod = repo0.copy(name = "Modified")
         repoDao.insert(repoExampleMod)
         yield()
         assertEquals(repoExampleMod, repos[1])

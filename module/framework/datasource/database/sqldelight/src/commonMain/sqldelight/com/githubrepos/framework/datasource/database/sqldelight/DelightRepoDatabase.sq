@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ListRepo (
+CREATE TABLE IF NOT EXISTS ListRepo(
     id INTEGER NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     fullName TEXT NOT NULL,
@@ -39,7 +39,7 @@ LIMIT :limit OFFSET :offset;
 
 --------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS RepoPage (
+CREATE TABLE IF NOT EXISTS RepoPage(
     repoId INTEGER NOT NULL PRIMARY KEY,
     page INTEGER
 );
@@ -58,7 +58,7 @@ WHERE repoId = :repoId;
 
 --------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS Repo (
+CREATE TABLE IF NOT EXISTS Repo(
     id INTEGER NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     fullName TEXT NOT NULL,

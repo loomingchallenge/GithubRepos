@@ -1,3 +1,4 @@
+import com.githubrepos.`build-logic`.disableAndroidTests
 import com.githubrepos.`build-logic`.isTestTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -9,6 +10,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
 }
+
+disableAndroidTests()
 
 kotlin {
     androidTarget {
