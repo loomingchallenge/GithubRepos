@@ -8,7 +8,7 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 fun <T, R> Flow<StoreReadResponse<T>>.toLce(transform: (T) -> R): Flow<Lce<out R>> {
     return map {
         when (it) {
-            is StoreReadResponse.Loading -> Lce.Loading
+            is StoreReadResponse.Initial, is StoreReadResponse.Loading -> Lce.Loading
             is StoreReadResponse.Data -> {
                 Lce.Content(transform(it.value))
             }
@@ -16,6 +16,7 @@ fun <T, R> Flow<StoreReadResponse<T>>.toLce(transform: (T) -> R): Flow<Lce<out R
                 val exception = when (it) {
                     is StoreReadResponse.Error.Exception -> it.error
                     is StoreReadResponse.Error.Message -> Exception(it.message)
+                    is StoreReadResponse.Error.Custom<*> -> Exception("StoreReadResponse.Error.Custom")
                 }
                 Lce.Error(exception)
             }

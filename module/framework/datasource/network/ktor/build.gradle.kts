@@ -58,6 +58,7 @@ kotlin {
             implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
+            implementation(project(":module:adapter:data_test"))
             implementation(libs.kotlin.test)
             implementation(libs.ktor.client.mock)
             implementation(libs.kotlinx.coroutines.test)
