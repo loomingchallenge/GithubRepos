@@ -3,8 +3,8 @@ package com.githubrepos.framework.datasource.network.ktor
 import com.githubrepos.adapter.data.datasource.network.BASE_URL
 import com.githubrepos.adapter.data.test.repoJSON
 import com.githubrepos.adapter.data.test.repos1_2JSON
-import com.githubrepos.framework.datasource.network.ktor.service.getRepoPath
-import com.githubrepos.framework.datasource.network.ktor.service.getSearchReposPath
+import com.githubrepos.framework.datasource.network.ktor.service.getRepoEndPoint
+import com.githubrepos.framework.datasource.network.ktor.service.getSearchReposEndPoint
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -24,14 +24,14 @@ class GithubServiceEngineManager {
                 HttpHeaders.ContentType to listOf("application/json", "charset=UTF-8")
             )
             when(request.url.toString()) {
-                "$BASE_URL${getRepoPath(31792824)}" -> {
+                "$BASE_URL${getRepoEndPoint(31792824)}" -> {
                     respond(
                         content = repoJSON,
                         status = HttpStatusCode.OK,
                         headers = responseHeaders
                     )
                 }
-                "$BASE_URL${getSearchReposPath()}&q=&page=1&per_page=2" -> {
+                "$BASE_URL${getSearchReposEndPoint()}&q=&page=1&per_page=2" -> {
                     respond(
                         content = repos1_2JSON,
                         status = HttpStatusCode.OK,

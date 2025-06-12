@@ -7,14 +7,20 @@ import com.githubrepos.adapter.data.datasource.network.service.GithubService
 import com.githubrepos.adapter.data.test.reposJSON
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.adapter.data.test.datasource.network.entity.FakeRepositorySearchResponse
+import com.githubrepos.adapter.data.test.datasource.network.entity.getPageData
+import com.githubrepos.adapter.data.test.datasource.network.entity.getRepo
 import kotlinx.serialization.json.Json
 
 internal class FakeGithubService(private val networkStateProvider: NetworkStateProvider): GithubService {
 
-    private var response: FakeRepositorySearchResponse? = null
+    private val response by lazy {
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+        json.decodeFromString<FakeRepositorySearchResponse>(reposJSON)
+    }
 
     override suspend fun searchRepos(query: String, page: Int, itemsPerPage: Int): RepositorySearchResponse {
-        val response = getDemoResponse()
         if (networkStateProvider.hasNetworkConnection()) {
             return response.getPageData(page, itemsPerPage)
         } else {
@@ -23,21 +29,10 @@ internal class FakeGithubService(private val networkStateProvider: NetworkStateP
     }
 
     override suspend fun getRepo(id: Long): Repo {
-        val response = getDemoResponse()
         if (networkStateProvider.hasNetworkConnection()) {
             return response.getRepo(id)
         } else {
             throw NoInternetException()
         }
-    }
-
-    private fun getDemoResponse(): FakeRepositorySearchResponse {
-        if (response == null) {
-            val json = Json {
-                ignoreUnknownKeys = true
-            }
-            response = json.decodeFromString<FakeRepositorySearchResponse>(reposJSON)
-        }
-        return response as FakeRepositorySearchResponse
     }
 }

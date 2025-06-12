@@ -11,14 +11,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 
-internal fun getRepoPath(id: Long) = "repositories/$id"
+internal fun getRepoEndPoint(id: Long) = "repositories/$id"
 
-internal fun getSearchReposPath() = "search/repositories?sort=stars"
+internal fun getSearchReposEndPoint() = "search/repositories?sort=stars"
 
 internal class GithubServiceImp(private val client: HttpClient): GithubService {
 
     override suspend fun searchRepos(query: String, page: Int, itemsPerPage: Int): RepositorySearchResponse {
-        return client.get(getSearchReposPath()) {
+        return client.get(getSearchReposEndPoint()) {
             url {
                 parameters.append("q", query)
                 parameters.append("page", page.toString())
@@ -28,6 +28,6 @@ internal class GithubServiceImp(private val client: HttpClient): GithubService {
     }
 
     override suspend fun getRepo(id: Long): Repo {
-        return client.get(getRepoPath(id)).body<KtorRepo>().toRepo()
+        return client.get(getRepoEndPoint(id)).body<KtorRepo>().toRepo()
     }
 }

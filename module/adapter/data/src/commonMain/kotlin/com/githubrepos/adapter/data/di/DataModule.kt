@@ -1,7 +1,6 @@
 package com.githubrepos.adapter.data.di
 
 import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
-import com.githubrepos.adapter.data.datasource.database.RepoDatabase
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao

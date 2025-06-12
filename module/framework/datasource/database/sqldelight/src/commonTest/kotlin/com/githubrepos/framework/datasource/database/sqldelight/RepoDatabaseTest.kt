@@ -8,6 +8,7 @@ import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.core.test.TestAppDispatchers
 import com.githubrepos.core.test.repo0
+import com.githubrepos.core.test.repo1
 import com.githubrepos.core.test.repoPage0
 import com.githubrepos.core.test.repoPage1
 import com.githubrepos.framework.datasource.database.sqldelight.di.createRepoDatabase
@@ -62,18 +63,21 @@ internal open class RepoDatabaseTest(private val databaseDriverFactory: Database
         yield()
         assertEquals(repo0, repos[0])
 
-        val repoExampleMod = repo0.copy(name = "Modified")
-        repoDao.insert(repoExampleMod)
+        val repo0Mod = repo0.copy(name = "Modified")
+        repoDao.insert(repo0Mod) // repo0 is replaced by repo0Mod in repo table.
         yield()
-        assertEquals(repoExampleMod, repos[1])
+        assertEquals(repo0Mod, repos[1])
 
+        repoDao.insert(repo1)
         repoDao.delete(repo0.id)
         yield()
         assertNull(repos[2])
         assertNull(repoDao.getRepo(repo0.id).first())
+        assertEquals(repo1, repoDao.getRepo(repo1.id).first())
 
         repoDao.deleteAll()
-        assertNull(repoDao.getRepo(repoExampleMod.id).first())
+        assertNull(repoDao.getRepo(repo0.id).first())
+        assertNull(repoDao.getRepo(repo1.id).first())
     }
 
     @Test
