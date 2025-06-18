@@ -4,6 +4,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 
 internal object RepoDestination : Destination {
     private const val repoID = "repoID"
@@ -20,9 +21,11 @@ internal object RepoDestination : Destination {
         navArgument(repoName) { type = NavType.StringType }
     )
 
-    fun getRepoID(navBackStackEntry: NavBackStackEntry) = navBackStackEntry.arguments?.getLong(repoID)
+    fun getRepoID(navBackStackEntry: NavBackStackEntry) =
+        navBackStackEntry.arguments?.read { getLong(repoID) }
 
-    fun getRepoName(navBackStackEntry: NavBackStackEntry) = navBackStackEntry.arguments?.getString(repoName)
+    fun getRepoName(navBackStackEntry: NavBackStackEntry) =
+        navBackStackEntry.arguments?.read { getString(repoName) }
 }
 
 internal fun NavHostController.navigateToRepoDestination(repoID: Long, repoName: String) {

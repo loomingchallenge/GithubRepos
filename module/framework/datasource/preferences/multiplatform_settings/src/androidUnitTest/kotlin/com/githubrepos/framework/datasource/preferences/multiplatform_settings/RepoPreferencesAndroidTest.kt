@@ -8,7 +8,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-
 internal fun createTestRepoPreferences(): RepoPreferences {
     val context = ApplicationProvider.getApplicationContext<Context>()
     return createRepoPreferences(context, TEST_REPO_PREFERENCES_NAME)

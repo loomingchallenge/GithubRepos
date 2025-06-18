@@ -43,7 +43,6 @@ kotlin {
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.androidx.test.core)
-                implementation(libs.androidx.test.junit)
                 implementation(libs.robolectric)
             }
         }

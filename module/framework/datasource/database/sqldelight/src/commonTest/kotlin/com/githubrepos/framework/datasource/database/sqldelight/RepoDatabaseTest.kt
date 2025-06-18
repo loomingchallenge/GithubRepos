@@ -22,7 +22,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -31,8 +30,7 @@ import kotlin.test.assertTrue
 
 internal const val TEST_REPO_DATABASE_NAME = "TEST$REPO_DATABASE_NAME"
 
-@Ignore
-internal open class RepoDatabaseTest(private val databaseDriverFactory: DatabaseDriverFactory) {
+internal abstract class RepoDatabaseTest(private val databaseDriverFactory: DatabaseDriverFactory) {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repoDatabase: RepoDatabase
@@ -49,7 +47,7 @@ internal open class RepoDatabaseTest(private val databaseDriverFactory: Database
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    open fun repoDaoTest() = runTest(testDispatcher) {
+    fun repoDaoTest() = runTest(testDispatcher) {
         val repoDao = repoDatabase.repoDao
         repoDao.deleteAll()
 
@@ -81,7 +79,7 @@ internal open class RepoDatabaseTest(private val databaseDriverFactory: Database
     }
 
     @Test
-    open fun repoPageDaoTest() = runTest(testDispatcher) {
+    fun repoPageDaoTest() = runTest(testDispatcher) {
         val repoPageDao = repoDatabase.repoPageDao
         repoPageDao.deleteAll()
 
@@ -95,7 +93,7 @@ internal open class RepoDatabaseTest(private val databaseDriverFactory: Database
     }
 
     @Test
-    open fun listRepoDaoTest() = runTest(testDispatcher) {
+    fun listRepoDaoTest() = runTest(testDispatcher) {
         val listRepoDao = repoDatabase.listRepoDao
         listRepoDao.deleteAll()
 

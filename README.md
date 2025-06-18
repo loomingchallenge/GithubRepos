@@ -20,4 +20,7 @@ gradle jvmDemo
   Environment variables: FLAVOR=Demo; DEBUG=true  
 gradle web  
   Run: :composeApp:wasmJsRun  
+gradle allTests
+  Run: jvmTest testDebugUnitTest iosSimulatorArm64Test
+  Add Run Options: Run As Test
 </pre>

@@ -40,6 +40,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             // Paging
