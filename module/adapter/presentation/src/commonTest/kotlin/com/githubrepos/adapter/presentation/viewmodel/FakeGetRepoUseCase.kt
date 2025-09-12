@@ -24,7 +24,7 @@ class FakeGetRepoUseCase(private val networkStateProvider: FakeNetworkStateProvi
             if (freshDataOnly) {
                 flowOf(Lce.Loading, Lce.Error(NoInternetException()))
             } else {
-                flowOf(Lce.Content(repo0Old.copy(id = id)), Lce.Loading, Lce.Error(NoInternetException()))
+                flowOf(Lce.Content(repo0Old.copy(id = id)))
             }
         }
     }

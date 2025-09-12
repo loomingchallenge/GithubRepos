@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.launchIn
 interface RepoViewModel {
     val title: String
     val repoLceFlows: LceFlows<Repo>
-    fun loadRepo(refresh: Boolean)
+    fun loadRepo(freshDataOnly: Boolean)
 }
 
 internal class RepoViewModelImp (
@@ -29,11 +29,11 @@ internal class RepoViewModelImp (
         loadRepo(false)
     }
 
-    override fun loadRepo(refresh: Boolean) {
+    override fun loadRepo(freshDataOnly: Boolean) {
         repoJob?.cancel()
         repoLceFlows.loading.value = false
         repoLceFlows.clearError()
-        repoJob = getRepoUseCase.execute(repoID, refresh)
+        repoJob = getRepoUseCase.execute(repoID, freshDataOnly)
             .saveToLceFlows(repoLceFlows)
             .launchIn(scope)
     }

@@ -64,7 +64,7 @@ fun RepoScreen(
     val repo = repoViewModel.repoLceFlows.content.collectAsState().value // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
     val error = repoViewModel.repoLceFlows.error.collectAsState().value // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
 
-    val onRefresh = { repoViewModel.loadRepo(refresh = true) }
+    val onRefresh = { repoViewModel.loadRepo(freshDataOnly = true) }
     val onError = { repoViewModel.repoLceFlows.clearError() }
     val refreshing = rememberSaveable { mutableStateOf(RefreshState.NOT_LOADING) }
     val state = getPullRefreshState(refreshing, isLoading, error, onRefresh)
