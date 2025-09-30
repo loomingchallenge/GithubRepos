@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
@@ -15,20 +15,54 @@ object Flavor {
     const val DEMO = "Demo"
 }
 
-fun Project.getFlavorName(): String? {
+val flavorName = "FLAVOR"
+val flavorFilePath = "tmp/flavor.properties"
+
+tasks.register("writeFlavorProperty") {
+    description = "Write flavor to the temporary flavor.properties file."
+    group = "build setup"
+    val flavor = project.findProperty(flavorName) as String? ?: Flavor.DEMO
+    val tempPropsFile = project.rootProject.layout.buildDirectory.file(flavorFilePath).get().asFile
+
+    doLast {
+        tempPropsFile.apply {
+            parentFile.mkdirs()
+            writeText("$flavorName=$flavor")
+            println("Wrote $flavorName=$flavor to ${this.absolutePath}")
+        }
+    }
+}
+
+fun Project.getIosFlavor(): String? {
+    val taskRequest = gradle.startParameter.taskRequests.toString()
+    println("getFlavorFromFile: $taskRequest")
+    return if (taskRequest.contains("Apple")) {
+        val tempFile = rootProject.layout.buildDirectory.file(flavorFilePath).get().asFile
+        if (tempFile.exists()) {
+            val flavor = tempFile.readText().substringAfter("$flavorName=").trim()
+            flavor.ifEmpty { null }
+        } else {
+            null
+        }
+    } else {
+        null
+    }
+}
+
+fun Project.getAndroidFlavor(): String? {
     val taskRequests = gradle.startParameter.taskRequests.toString()
     val flavorRegex = Regex("assemble([a-zA-Z]+)(Debug|Release)")
     val matchResult = flavorRegex.find(taskRequests)
     return matchResult?.groups?.get(1)?.value
 }
 
-val androidFlavor = project.getFlavorName()
+val iosFlavor = project.getIosFlavor()
+val androidFlavor = project.getAndroidFlavor()
+val envFlavor: String? = System.getenv(flavorName)
 
-val envFlavor: String? = System.getenv("FLAVOR")
-
-val flavor = if (envFlavor == Flavor.FULL || androidFlavor == Flavor.FULL) {
+val flavor = if (envFlavor == Flavor.FULL || androidFlavor == Flavor.FULL || iosFlavor == Flavor.FULL) {
     Flavor.FULL
-} else if (envFlavor == Flavor.DEMO || androidFlavor == Flavor.DEMO) {
+} else if (envFlavor == Flavor.DEMO || androidFlavor == Flavor.DEMO || iosFlavor == Flavor.DEMO) {
     Flavor.DEMO
 } else {
     null

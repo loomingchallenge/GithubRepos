@@ -10,8 +10,6 @@
 xcuserdata
 !src/**/build/
 local.properties
-.idea
-.DS_Store
 captures
 .externalNativeBuild
 .cxx
@@ -40,10 +38,10 @@ dist/
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
+!.idea/runConfigurations/
 
 # Unit test reports
 TEST*.xml
