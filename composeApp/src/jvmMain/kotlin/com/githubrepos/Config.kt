@@ -1,8 +1,8 @@
 package com.githubrepos
 
-actual object Config {
+object ConfigImp: Config {
 
-    actual val isDebug: Boolean = System.getenv("DEBUG").toBoolean()
+    override val isDebug: Boolean = System.getenv("DEBUG").toBoolean()
 
-    actual val isPullRefreshSupported = false
+    override val isPullRefreshSupported = false
 }

@@ -1,6 +1,6 @@
 package com.githubrepos
 
-expect object Config {
+interface Config {
 
     val isDebug: Boolean
 

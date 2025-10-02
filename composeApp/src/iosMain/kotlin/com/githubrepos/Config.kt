@@ -3,10 +3,10 @@ package com.githubrepos
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.Platform
 
-actual object Config {
+object ConfigImp: Config {
 
     @OptIn(ExperimentalNativeApi::class)
-    actual val isDebug: Boolean = Platform.isDebugBinary
+    override val isDebug: Boolean = Platform.isDebugBinary
 
-    actual val isPullRefreshSupported = true
+    override val isPullRefreshSupported = true
 }

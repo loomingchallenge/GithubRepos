@@ -18,6 +18,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -117,7 +118,7 @@ internal fun RepoTopBar(title: String?, onBack: () -> Unit) {
         contentColor = MaterialTheme.colors.onPrimary,
         navigationIcon =  {
             IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
             }
         }
     )

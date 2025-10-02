@@ -1,6 +1,6 @@
 [versions]
-versionCode = "26"
-versionName = "1.3.17"
+versionCode = "27"
+versionName = "1.3.18"
 android-minSdk = "26"
 android-compileSdk = "35"
 android-targetSdk = "35"

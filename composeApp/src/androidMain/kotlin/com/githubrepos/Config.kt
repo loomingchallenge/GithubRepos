@@ -2,9 +2,9 @@ package com.githubrepos
 
 import com.githubrepos.BuildConfig
 
-actual object Config {
+object ConfigImp: Config {
 
-    actual val isDebug: Boolean = BuildConfig.DEBUG
+    override val isDebug: Boolean = BuildConfig.DEBUG
 
-    actual val isPullRefreshSupported = true
+    override val isPullRefreshSupported = true
 }

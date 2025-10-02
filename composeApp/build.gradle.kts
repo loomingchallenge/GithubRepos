@@ -35,7 +35,6 @@ tasks.register("writeFlavorProperty") {
 
 fun Project.getIosFlavor(): String? {
     val taskRequest = gradle.startParameter.taskRequests.toString()
-    println("getFlavorFromFile: $taskRequest")
     return if (taskRequest.contains("Apple")) {
         val tempFile = rootProject.layout.buildDirectory.file(flavorFilePath).get().asFile
         if (tempFile.exists()) {
@@ -87,6 +86,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
+            binaryOption("bundleId", "com.githubrepos.shared")
             baseName = "ComposeApp"
             isStatic = true
         }
