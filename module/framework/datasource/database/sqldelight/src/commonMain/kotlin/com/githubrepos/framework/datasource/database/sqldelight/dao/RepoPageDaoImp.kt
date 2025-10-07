@@ -23,6 +23,14 @@ internal class RepoPageDaoImp(private val queries: DelightRepoDatabaseQueries): 
         return queries.getRepoPage(repoId, ::createRepoPage).executeAsOneOrNull()
     }
 
+    override fun getMinPage(): Long? {
+        return queries.getMinPage().executeAsOneOrNull()?.min
+    }
+
+    override fun getMaxPage(): Long? {
+        return queries.getMaxPage().executeAsOneOrNull()?.max
+    }
+
     override fun deleteAll() {
         queries.deleteRepoPages()
     }

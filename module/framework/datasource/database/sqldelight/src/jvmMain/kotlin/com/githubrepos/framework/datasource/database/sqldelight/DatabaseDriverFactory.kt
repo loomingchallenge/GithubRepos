@@ -9,7 +9,8 @@ import java.io.File
 class DatabaseDriverFactoryImp(private val appName: String, private val databaseName: String): DatabaseDriverFactory {
 
     override fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
-        val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${getDatabaseFile(appName, databaseName).absolutePath}")
+        val path = getDatabaseFile(appName, databaseName).absolutePath
+        val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${path}")
         schema.create(driver)
         return driver
     }

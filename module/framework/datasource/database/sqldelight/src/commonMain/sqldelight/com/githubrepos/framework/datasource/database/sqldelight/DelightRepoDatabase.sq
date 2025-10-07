@@ -56,6 +56,14 @@ SELECT *
 FROM RepoPage
 WHERE repoId = :repoId;
 
+getMinPage:
+SELECT min(page)
+FROM RepoPage;
+
+getMaxPage:
+SELECT max(page)
+FROM RepoPage;
+
 --------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS Repo(

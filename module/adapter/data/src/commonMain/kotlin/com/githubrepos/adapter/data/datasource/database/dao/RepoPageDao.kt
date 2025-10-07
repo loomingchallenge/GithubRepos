@@ -8,5 +8,9 @@ interface RepoPageDao {
 
     fun getRepoPage(repoId: Long): RepoPage?
 
+    fun getMinPage(): Long?
+
+    fun getMaxPage(): Long?
+
     fun deleteAll()
 }

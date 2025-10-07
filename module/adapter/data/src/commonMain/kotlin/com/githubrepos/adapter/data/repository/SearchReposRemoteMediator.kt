@@ -29,27 +29,23 @@ internal class SearchReposRemoteMediator(
     private val dispatchers: AppDispatchers
 ) : RemoteMediator<Int, ListRepo>() {
 
-    private var lastPage: Int? = null
+    private var endPage: Int? = null
 
     override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH // InitializeAction.LAUNCH_INITIAL_REFRESH - if data should be loaded from API first time after creation
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, ListRepo>): MediatorResult {
         return withContext(dispatchers.io) {
-            if ((loadType == LoadType.PREPEND || loadType == LoadType.APPEND) && arePagesEmpty(state)) {
-                MediatorResult.Success(endOfPaginationReached = false)
+            val page = getNextPage(loadType, state)
+            if (page == NEXT_PAGE_NOT_EXIST) {
+                MediatorResult.Success(endOfPaginationReached = true)
             } else {
-                val page = getNextPage(loadType, state)
-                if (page == NEXT_PAGE_NOT_EXIST || page == NEXT_PAGE_CANNOT_BE_FOUND) {
-                    MediatorResult.Success(endOfPaginationReached = page == NEXT_PAGE_NOT_EXIST)
-                } else {
-                    try {
-                        loadPage(loadType, state, page)
-                        MediatorResult.Success(endOfPaginationReached = lastPage?.let { page >= it } ?: false)
-                    } catch (exception: Exception) {
-                        MediatorResult.Error(exception)
-                    }
+                try {
+                    loadPage(loadType, state, page)
+                    MediatorResult.Success(endOfPaginationReached = endPage?.let { page >= it } ?: false)
+                } catch (exception: Exception) {
+                    MediatorResult.Error(exception)
                 }
             }
         }
@@ -69,7 +65,7 @@ internal class SearchReposRemoteMediator(
                 }
                 repoPageDao.insert(repoPages)
             } else {
-                lastPage = page - 1
+                endPage = page - 1
             }
         }
     }
@@ -77,30 +73,27 @@ internal class SearchReposRemoteMediator(
     private fun getNextPage(loadType: LoadType, state: PagingState<Int, ListRepo>): Int =
         when (loadType) {
             LoadType.REFRESH -> {
-                lastPage = null
+                endPage = null
                 val page = getPageClosestToCurrentPosition(state)
                 page ?: GITHUB_STARTING_PAGE_INDEX
             }
 
             LoadType.PREPEND -> {
-                when (val page = getPageForFirstItem(state)) {
-                    NEXT_PAGE_CANNOT_BE_FOUND -> NEXT_PAGE_CANNOT_BE_FOUND
+                when (val page = getPageForFirstItem()) {
+                    NEXT_PAGE_CANNOT_BE_FOUND -> GITHUB_STARTING_PAGE_INDEX
                     GITHUB_STARTING_PAGE_INDEX -> NEXT_PAGE_NOT_EXIST
                     else -> page - 1
                 }
             }
 
             LoadType.APPEND -> {
-                when (val page = getPageKeyForLastItem(state)) {
-                    NEXT_PAGE_CANNOT_BE_FOUND -> NEXT_PAGE_CANNOT_BE_FOUND
-                    lastPage -> NEXT_PAGE_NOT_EXIST
+                when (val page = getPageKeyForLastItem()) {
+                    NEXT_PAGE_CANNOT_BE_FOUND -> GITHUB_STARTING_PAGE_INDEX
+                    endPage -> NEXT_PAGE_NOT_EXIST
                     else -> page + 1
                 }
             }
         }
-
-    private fun arePagesEmpty(state: PagingState<Int, ListRepo>) =
-        state.pages.firstOrNull { it.data.isNotEmpty() } == null
 
     private fun getPageClosestToCurrentPosition(state: PagingState<Int, ListRepo>): Int? {
         return state.anchorPosition?.let { position ->
@@ -110,17 +103,11 @@ internal class SearchReposRemoteMediator(
         }
     }
 
-    private fun getPageForFirstItem(state: PagingState<Int, ListRepo>): Int {
-        state.pages.first { it.data.isNotEmpty() }.data.first().let { repository ->
-            return repoPageDao.getRepoPage(repository.id)?.page
-                ?: NEXT_PAGE_CANNOT_BE_FOUND
-        }
+    private fun getPageForFirstItem(): Int {
+        return repoPageDao.getMinPage()?.toInt() ?: NEXT_PAGE_CANNOT_BE_FOUND
     }
 
-    private fun getPageKeyForLastItem(state: PagingState<Int, ListRepo>): Int {
-        state.pages.last { it.data.isNotEmpty() }.data.last().let { repository ->
-            return repoPageDao.getRepoPage(repository.id)?.page
-                ?: NEXT_PAGE_CANNOT_BE_FOUND
-        }
+    private fun getPageKeyForLastItem(): Int {
+        return repoPageDao.getMaxPage()?.toInt() ?: NEXT_PAGE_CANNOT_BE_FOUND
     }
 }
