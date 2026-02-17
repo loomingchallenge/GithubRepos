@@ -5,9 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.error.getMessage
 import com.githubrepos.framework.ui.screens.navigation.NavigationController
@@ -33,9 +35,15 @@ import kotlinx.coroutines.launch
 fun UI(navigationController: NavigationController) {
     MainTheme(darkTheme = false) {
         val topBarController: TopBarController = remember { TopBarController() }
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .windowInsetsPadding(
+                WindowInsets.displayCutout
+            )
+        ) {
             Scaffold(
-                modifier = Modifier,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
                 topBar = topBarController.topBar.value
             ) { innerPadding ->
                 navigationController.navHost(Modifier.padding(innerPadding), topBarController)
