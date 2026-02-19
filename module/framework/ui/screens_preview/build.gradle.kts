@@ -35,17 +35,17 @@ kotlin {
             implementation(project(":module:framework:ui:screens"))
 
             // Compose
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.uiToolingPreview)
         }
         androidMain.dependencies {
             implementation(project(":module:core_test"))
 
             // Compose
-            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.androidx.compose.ui.tooling.preview)
         }
     }
 }
@@ -61,7 +61,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     dependencies {
-        debugImplementation(libs.compose.ui.tooling)
+        debugImplementation(libs.androidx.compose.ui.tooling)
     }
     buildFeatures {
         compose = true

@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // TODO https://stackoverflow.com/questions/79340066/backhandler-on-compose-multiplatform-android-and-ios
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val isErrorSet = runBlocking { errorReporter.isErrorSet() }

@@ -44,7 +44,7 @@ kotlin {
             }
 
             // Compose
-            api(compose.runtime)
+            api(libs.compose.runtime)
 
             // Kotlin serialization
             implementation(libs.kotlinx.serialization)

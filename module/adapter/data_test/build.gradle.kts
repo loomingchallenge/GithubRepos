@@ -39,8 +39,8 @@ kotlin {
             api(project(":module:core_test"))
 
             // Compose
-            api(compose.runtime)
-            implementation(compose.components.resources)
+            api(libs.compose.runtime)
+            implementation(libs.compose.components.resources)
 
             // Kotlin serialization
             implementation(libs.kotlinx.serialization)
