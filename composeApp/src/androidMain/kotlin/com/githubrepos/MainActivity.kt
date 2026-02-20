@@ -8,7 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.ui.UI
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -24,17 +23,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             UI()
-        }
-    }
-
-    // TODO https://stackoverflow.com/questions/79340066/backhandler-on-compose-multiplatform-android-and-ios
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        val isErrorSet = runBlocking { errorReporter.isErrorSet() }
-        if (isErrorSet) {
-            runBlocking { errorReporter.clearError() }
-        } else {
-            super.onBackPressed()
         }
     }
 }

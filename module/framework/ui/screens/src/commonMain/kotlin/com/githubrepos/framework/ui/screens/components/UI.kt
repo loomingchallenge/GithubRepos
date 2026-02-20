@@ -67,6 +67,7 @@ fun Error(errorReporter: ErrorReporter) {
         }
         Box(modifier = Modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .background(GrayTransparent)
             .clickable(
                 indication = null,
