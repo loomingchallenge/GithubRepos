@@ -1,6 +1,6 @@
 [versions]
-versionCode = "32"
-versionName = "1.3.23"
+versionCode = "33"
+versionName = "1.3.24"
 android-minSdk = "26"
 android-compileSdk = "36"
 android-targetSdk = "36"
@@ -10,7 +10,7 @@ kotlin = "2.3.10"
 compose-multiplatform = "1.10.1"
 compose-ui = "1.10.1"
 compose-material-icons-extended = "1.7.3"
-androidx-activityCompose = "1.11.0"
+androidx-activityCompose = "1.12.4"
 #androidx-appcompat = "1.7.0"
 #androidx-constraintlayout = "2.2.0"
 #androidx-core-ktx = "1.15.0"
@@ -20,22 +20,22 @@ androidx-test-core = "1.7.0"
 androidx-lifecycle = "2.10.0-alpha06"
 androidx-navigation = "2.9.2"
 kotlinx-coroutines-swing = "1.10.2"
-kotlinx-serialization = "1.9.0"
+kotlinx-serialization = "1.10.0"
 kotlinx-coroutines = "1.10.2"
 paging = "3.3.0-alpha02-0.5.1"
-store = "5.1.0-alpha07"
-atomicfu = "0.29.0"
+store = "5.1.0-alpha08"
+atomicfu = "0.31.0"
 gson = "2.13.2"
-sqldelight = "2.1.0"
+sqldelight = "2.2.1"
 touchlab = "2.1.0"
 androidx-security = "1.1.0"
 multiplatform-settings = "1.3.0"
 koin-bom = "4.1.1"
-logback-classic = "1.5.19"
-ktor = "3.3.0"
+logback-classic = "1.5.32"
+ktor = "3.4.0"
 slf4j = "1.7.36"
 #mockk = "1.13.12"
-robolectric = "4.16"
+robolectric = "4.16.1"
 turbine = "1.2.1"
 
 [libraries]
@@ -56,6 +56,7 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose-multiplatform" }
+compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose-multiplatform" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-components-uiToolingPreview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose-multiplatform" }
