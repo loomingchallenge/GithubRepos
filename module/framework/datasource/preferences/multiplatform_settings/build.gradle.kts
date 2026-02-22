@@ -83,11 +83,13 @@ kotlin {
     }
 }
 if ("mac" in System.getProperties()["os.name"].toString().lowercase()) {
-    tasks.create<Exec>("launchIosSimulator") {
+    val launchIosSimulator = tasks.register<Exec>("launchIosSimulator") {
         commandLine("open", "-a", "Simulator")
     }
 
-    tasks.getByName("iosSimulatorArm64Test").dependsOn("launchIosSimulator")
+    tasks.named("iosSimulatorArm64Test") {
+        dependsOn(launchIosSimulator)
+    }
 }
 tasks.withType<KotlinNativeSimulatorTest>().getByName("iosSimulatorArm64Test") {
     standalone.set(false)
