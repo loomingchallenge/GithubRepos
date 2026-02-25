@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.error.getMessage
 import com.githubrepos.framework.ui.screens.navigation.NavigationController
@@ -29,7 +30,10 @@ import com.githubrepos.framework.ui.screens.theme.GrayTransparent
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.githubrepos.adapter.presentation.error.Error
 
 @Composable
 fun UI(navigationController: NavigationController) {
@@ -87,5 +91,26 @@ fun Error(errorReporter: ErrorReporter) {
                 contentColor = MaterialTheme.colors.onError
             )
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 300, heightDp = 600)
+@Composable
+internal fun ErrorPreview() {
+    val errorReporter: ErrorReporter = object : ErrorReporter {
+
+        override val error: StateFlow<Error?>
+            get() = MutableStateFlow(Error(error = "Example Error"))
+
+        override suspend fun setError(error: String?, exc: Throwable?, onErrorDismissed: (() -> Unit)?) {}
+
+        override suspend fun clearError() {}
+
+        override suspend fun isErrorSet(): Boolean { return true }
+
+        override fun logError(error: String?, exc: Throwable?) {}
+    }
+    MainTheme {
+        Error(errorReporter)
     }
 }

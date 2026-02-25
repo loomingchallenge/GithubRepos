@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material)
             implementation(libs.compose.ui)
+            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.material.icons.extended)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -65,4 +66,8 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+dependencies {
+    debugImplementation(libs.compose.ui.tooling)
 }

@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
@@ -44,7 +45,9 @@ import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.framework.ui.screens.components.OverflowMenu
 import com.githubrepos.framework.ui.screens.components.ProgressIndicator
 import com.githubrepos.framework.ui.screens.components.RetryButton
+import com.githubrepos.framework.ui.screens.preview.listRepo0
 import com.githubrepos.framework.ui.screens.theme.LightGray
+import com.githubrepos.framework.ui.screens.theme.MainTheme
 import githubrepos.module.framework.ui.screens.generated.resources.Res
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_language
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_refresh
@@ -249,3 +252,10 @@ fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+internal fun RepositoryItemPreview() {
+    MainTheme {
+        RepositoryItem(listRepo0)
+    }
+}

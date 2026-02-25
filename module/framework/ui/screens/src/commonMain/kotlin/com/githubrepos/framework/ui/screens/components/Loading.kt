@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,9 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.githubrepos.framework.ui.screens.theme.GrayTransparent
 import com.githubrepos.framework.ui.screens.theme.LightGray
+import com.githubrepos.framework.ui.screens.theme.MainTheme
 import githubrepos.module.framework.ui.screens.generated.resources.Res
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_retry
 import githubrepos.module.framework.ui.screens.generated.resources.unknown_error
@@ -132,6 +132,31 @@ fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: ()
             onClick = onClick
         ) {
             Text(text = stringResource(resource = Res.string.repository_list_retry))
+        }
+    }
+}
+
+@Preview(showBackground = true, heightDp = 100, widthDp = 100)
+@Composable
+internal fun ProgressIndicatorPreview() {
+    MainTheme {
+        ProgressIndicator()
+    }
+}
+
+@Preview(showBackground = true, heightDp = 100, widthDp = 100)
+@Composable
+internal fun SmallProgressIndicatorPreview() {
+    MainTheme {
+        SmallProgressIndicator()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+internal fun RetryButtonPreview() {
+    MainTheme {
+        RetryButton(throwable = Throwable("Unable to resolve host \"api.github.com\": No address associated with hostname")) {
         }
     }
 }

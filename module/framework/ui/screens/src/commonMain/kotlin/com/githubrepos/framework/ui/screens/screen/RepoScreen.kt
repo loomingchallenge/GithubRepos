@@ -34,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.viewmodel.RepoViewModel
@@ -43,6 +45,8 @@ import com.githubrepos.framework.ui.screens.components.RefreshState
 import com.githubrepos.framework.ui.screens.components.RetryButton
 import com.githubrepos.framework.ui.screens.components.SmallProgressIndicator
 import com.githubrepos.framework.ui.screens.components.getPullRefreshState
+import com.githubrepos.framework.ui.screens.preview.repo0
+import com.githubrepos.framework.ui.screens.theme.MainTheme
 import githubrepos.module.framework.ui.screens.generated.resources.Res
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_language
 import githubrepos.module.framework.ui.screens.generated.resources.repository_screen_clone
@@ -184,3 +188,11 @@ internal fun URLText(url: String?) {
     )
 }
 
+@Preview(showBackground = true)
+@PreviewScreenSizes
+@Composable
+internal fun RepoPreview() {
+    MainTheme {
+        Repo(repo0)
+    }
+}
