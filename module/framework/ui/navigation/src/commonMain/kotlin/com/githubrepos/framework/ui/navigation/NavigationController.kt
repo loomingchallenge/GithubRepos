@@ -27,7 +27,7 @@ internal class NavigationControllerImp(
 ) : NavigationController {
 
     @Composable
-    override fun navHost(modifier: Modifier, topBarController: TopBarController) {
+    override fun NavHost(modifier: Modifier, topBarController: TopBarController) {
         val navController = rememberNavController()
         NavHost(
             navController = navController,

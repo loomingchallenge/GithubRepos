@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.githubrepos.framework.ui.screens.theme.GrayTransparent
@@ -60,7 +61,7 @@ internal fun getPullRefreshState(refreshing: MutableState<RefreshState>, isLoadi
 }
 
 @Composable
-fun ProgressIndicatorInBox(
+internal fun ProgressIndicatorInBox(
     modifier: Modifier = Modifier,
     color: Color = Color.White,
     backgroundColor: Color = GrayTransparent
@@ -81,24 +82,26 @@ fun ProgressIndicatorInBox(
 }
 
 @Composable
-fun ProgressIndicator(
+internal fun ProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = LightGray
 ) {
     CircularProgressIndicator(
         modifier = Modifier
+            .testTag(LoadingTestTags.PROGRESS_INDICATOR)
             .then(modifier),
         color = color
     )
 }
 
 @Composable
-fun SmallProgressIndicator(
+internal fun SmallProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = LightGray
 ) {
     CircularProgressIndicator(
         modifier = Modifier
+            .testTag(LoadingTestTags.SMALL_PROGRESS_INDICATOR)
             .padding(8.dp)
             .size(20.dp)
             .then(modifier),
@@ -108,9 +111,10 @@ fun SmallProgressIndicator(
 }
 
 @Composable
-fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: () -> Unit) {
+internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: () -> Unit) {
     Column(
         Modifier
+            .testTag(LoadingTestTags.RETRY_BUTTON)
             .padding(8.dp)
             .then(modifier)) {
         Surface(
@@ -122,6 +126,7 @@ fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: ()
             Text(
                 text = throwable.message ?: stringResource(resource = Res.string.unknown_error),
                 modifier = Modifier
+                    .testTag(LoadingTestTags.RETRY_BUTTON_TEXT)
                     .padding(8.dp)
                     .fillMaxWidth(),
                 color = MaterialTheme.colors.onError
@@ -159,4 +164,14 @@ internal fun RetryButtonPreview() {
         RetryButton(throwable = Throwable("Unable to resolve host \"api.github.com\": No address associated with hostname")) {
         }
     }
+}
+
+internal object LoadingTestTags {
+
+    private const val PREFIX = "Loading"
+
+    const val PROGRESS_INDICATOR = "$PREFIX:ProgressIndicator"
+    const val SMALL_PROGRESS_INDICATOR = "$PREFIX:SmallProgressIndicator"
+    const val RETRY_BUTTON = "$PREFIX:RetryButton"
+    const val RETRY_BUTTON_TEXT = "$PREFIX:RetryButtonText"
 }

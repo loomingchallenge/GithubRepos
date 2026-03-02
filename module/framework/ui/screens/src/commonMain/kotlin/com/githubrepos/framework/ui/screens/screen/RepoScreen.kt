@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -74,11 +75,18 @@ fun RepoScreen(
     val state = getPullRefreshState(refreshing, isLoading, error, onRefresh)
     Box(
         Modifier
+            .testTag(RepoScreenTags.SCREEN)
             .fillMaxSize()
             .pullRefresh(state)
     ) {
         RepoLce(isLoading, refreshing, onRefresh, repo, error, errorReporter, onError)
-        PullRefreshIndicator(refreshing.value == RefreshState.LOADING, state, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(
+            refreshing.value == RefreshState.LOADING,
+            state,
+            Modifier
+                .testTag(RepoScreenTags.PULL_REFRESH)
+                .align(Alignment.TopCenter)
+        )
     }
 }
 
@@ -128,46 +136,52 @@ internal fun RepoTopBar(title: String?, onBack: () -> Unit) {
 }
 
 @Composable
-fun Repo(repo: Repo) {
+internal fun Repo(repo: Repo) {
     Column(
         Modifier
+            .testTag(RepoScreenTags.REPO)
             .padding(12.dp)
             .verticalScroll(rememberScrollState())) {
         Text(
+            modifier = Modifier.testTag(RepoScreenTags.REPO_FULL_NAME),
             text = repo.fullName,
             color = MaterialTheme.colors.onSurface,
             style = MaterialTheme.typography.h5
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
+            modifier = Modifier.testTag(RepoScreenTags.REPO_DESCRIPTION),
             text = repo.description ?: ""
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = stringResource(resource = Res.string.repository_screen_github))
-        URLText(repo.url)
+        URLText(repo.url, Modifier.testTag(RepoScreenTags.REPO_URL))
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = stringResource(resource = Res.string.repository_screen_homepage))
-        URLText(repo.homepage)
+        URLText(repo.homepage, Modifier.testTag(RepoScreenTags.REPO_HOMEPAGE))
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = stringResource(resource = Res.string.repository_screen_clone))
-        URLText(repo.cloneUrl)
+        URLText(repo.cloneUrl, Modifier.testTag(RepoScreenTags.REPO_CLONE_URL))
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = stringResource(resource = Res.string.repository_screen_deployments))
-        URLText(repo.deploymentsUrl)
+        URLText(repo.deploymentsUrl, Modifier.testTag(RepoScreenTags.REPO_DEPLOYMENTS_URL))
         Spacer(modifier = Modifier.height(12.dp))
         Row(Modifier.padding(top = 12.dp)) {
             Text(
+                modifier = Modifier.testTag(RepoScreenTags.REPO_LANGUAGE),
                 text = stringResource(resource = Res.string.repository_list_language, repo.language ?: ""),
                 color = MaterialTheme.colors.onBackground,
             )
             Spacer(modifier = Modifier.weight(1.0f))
             Icon(Icons.Filled.Star, "star")
             Text(
+                modifier = Modifier.testTag(RepoScreenTags.REPO_STARS),
                 text = repo.stars.toString(),
                 color = MaterialTheme.colors.onBackground,
             )
             Icon(Icons.Filled.Share, "branch", Modifier.rotate(270.0f))
             Text(
+                modifier = Modifier.testTag(RepoScreenTags.REPO_FORKS),
                 text = repo.forks.toString(),
                 color = MaterialTheme.colors.onBackground,
             )
@@ -176,12 +190,14 @@ fun Repo(repo: Repo) {
 }
 
 @Composable
-internal fun URLText(url: String?) {
+internal fun URLText(url: String?, modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
     Text(
-        modifier = Modifier.clickable {
-            url?.let { uriHandler.openUri(url) }
-        },
+        modifier = Modifier
+            .clickable {
+                url?.let { uriHandler.openUri(url) }
+            }
+            .then(modifier),
         text = url ?: "",
         color = MaterialTheme.colors.onSurface,
         style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Medium),
@@ -195,4 +211,23 @@ internal fun RepoPreview() {
     MainTheme {
         Repo(repo0)
     }
+}
+
+internal object RepoScreenTags {
+
+    private const val PREFIX = "RepoScreen"
+
+    const val SCREEN = "$PREFIX:Screen"
+
+    const val PULL_REFRESH = "$PREFIX:PullRefresh"
+    const val REPO = "$PREFIX:Repo"
+    const val REPO_FULL_NAME = "$PREFIX:repo:full_name"
+    const val REPO_DESCRIPTION = "$PREFIX:repo:description"
+    const val REPO_URL = "$PREFIX:repo:url"
+    const val REPO_HOMEPAGE = "$PREFIX:repo:homepage"
+    const val REPO_CLONE_URL = "$PREFIX:repo:clone_url"
+    const val REPO_DEPLOYMENTS_URL = "$PREFIX:repo:deployments_url"
+    const val REPO_STARS = "$PREFIX:repo:stars"
+    const val REPO_FORKS = "$PREFIX:repo:forks"
+    const val REPO_LANGUAGE = "$PREFIX:repo:language"
 }

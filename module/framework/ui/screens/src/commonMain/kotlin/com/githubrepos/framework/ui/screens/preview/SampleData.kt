@@ -3,7 +3,7 @@ package com.githubrepos.framework.ui.screens.preview
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.entity.Repo
 
-val listRepo0 by lazy { ListRepo(
+internal val listRepo0 by lazy { ListRepo(
     0,
     "okhttp",
     "square/okhttp",
@@ -13,7 +13,7 @@ val listRepo0 by lazy { ListRepo(
     "Kotlin"
 ) }
 
-val repo0 by lazy { Repo(
+internal val repo0 by lazy { Repo(
     31792824,
     "flutter",
     "flutter/flutter",

@@ -89,7 +89,7 @@ fun RepoListScreen(
 }
 
 @Composable
-fun BoxScope.RepoListWithErrors(
+internal fun BoxScope.RepoListWithErrors(
     refreshLoadState: LoadState,
     onRefresh: () -> Unit,
     repositories: LazyPagingItems<ListRepo>,
@@ -214,7 +214,7 @@ internal fun RepositoryDivider() {
 }
 
 @Composable
-fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
+internal fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
     Column(Modifier
         .clickable {
             onRepoItem(listRepo)

@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.error.getMessage
@@ -50,7 +51,7 @@ fun UI(navigationController: NavigationController) {
                 modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
                 topBar = topBarController.topBar.value
             ) { innerPadding ->
-                navigationController.navHost(Modifier.padding(innerPadding), topBarController)
+                navigationController.NavHost(Modifier.padding(innerPadding), topBarController)
             }
             Error(navigationController.errorReporter)
         }
@@ -59,7 +60,7 @@ fun UI(navigationController: NavigationController) {
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun Error(errorReporter: ErrorReporter) {
+internal fun Error(errorReporter: ErrorReporter) {
     val errorData by errorReporter.error.collectAsState() // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
     errorData?.let { error ->
         val snackbarData = object : SnackbarData {
@@ -70,6 +71,7 @@ fun Error(errorReporter: ErrorReporter) {
             override fun performAction() { }
         }
         Box(modifier = Modifier
+            .testTag(UITestTags.ERROR)
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.safeDrawing)
             .background(GrayTransparent)
@@ -85,7 +87,8 @@ fun Error(errorReporter: ErrorReporter) {
             )
         ) {
             Snackbar(
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter),
                 snackbarData = snackbarData,
                 backgroundColor = MaterialTheme.colors.error,
                 contentColor = MaterialTheme.colors.onError
@@ -113,4 +116,11 @@ internal fun ErrorPreview() {
     MainTheme {
         Error(errorReporter)
     }
+}
+
+internal object UITestTags {
+
+    private const val PREFIX = "UI"
+
+    const val ERROR = "$PREFIX:Error"
 }

@@ -134,7 +134,6 @@ kotlin {
             implementation(project(":module:framework:datasource:preferences:multiplatform_settings"))
 
             // Compose
-            implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
             // Koin
@@ -186,9 +185,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    dependencies {
-        debugImplementation(libs.androidx.compose.ui.tooling)
     }
     buildFeatures {
         compose = true

@@ -13,5 +13,5 @@ interface NavigationController {
     val viewModelProvider: ViewModelProvider
 
     @Composable
-    fun navHost(modifier: Modifier, topBarController: TopBarController)
+    fun NavHost(modifier: Modifier, topBarController: TopBarController)
 }
