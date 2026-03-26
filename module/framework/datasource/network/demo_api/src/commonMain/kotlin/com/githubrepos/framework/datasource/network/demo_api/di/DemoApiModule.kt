@@ -3,10 +3,10 @@ package com.githubrepos.framework.datasource.network.demo_api.di
 import com.githubrepos.adapter.data.datasource.network.NetworkServiceProvider
 import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
-import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkServiceProvider
+import com.githubrepos.adapter.data.test.datasource.network.FakeJsonNetworkServiceProvider
 
 fun createNetworkServiceProvider(networkStateProvider: NetworkStateProvider): NetworkServiceProvider {
-    return FakeNetworkServiceProvider(networkStateProvider)
+    return FakeJsonNetworkServiceProvider(networkStateProvider)
 }
 
 fun createGithubService(networkServiceProvider: NetworkServiceProvider): GithubService {

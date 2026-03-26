@@ -51,7 +51,7 @@ internal class ErrorReporterImp : ErrorReporter {
                 println(error)
             }
             exc?.let {
-                exc.printStackTrace()
+                println(it.stackTraceToString())
             }
         }
     }

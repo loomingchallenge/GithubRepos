@@ -35,16 +35,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
-import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.githubrepos.adapter.presentation.viewmodel.RepoListViewModel
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.framework.ui.screens.components.OverflowMenu
 import com.githubrepos.framework.ui.screens.components.ProgressIndicator
-import com.githubrepos.framework.ui.screens.components.RetryButton
+import com.githubrepos.framework.ui.screens.components.RetryView
 import com.githubrepos.framework.ui.screens.preview.listRepo0
 import com.githubrepos.framework.ui.screens.theme.LightGray
 import com.githubrepos.framework.ui.screens.theme.MainTheme
@@ -77,9 +79,19 @@ fun RepoListScreen(
     val modifier = Modifier.fillMaxSize()
     if (repoListViewModel.isPullRefreshSupported) {
         val state = getPullRefreshState(repositories, onRefresh)
-        Box(modifier.then(Modifier.pullRefresh(state))) {
+        Box(modifier.then(
+                Modifier
+                    .testTag(RepoListScreenTags.SCREEN)
+                    .pullRefresh(state))
+        ) {
             RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
-            PullRefreshIndicator(false, state, Modifier.align(Alignment.TopCenter))
+            PullRefreshIndicator(
+                false,
+                state,
+                Modifier
+                    .testTag(RepoListScreenTags.PULL_REFRESH)
+                    .align(Alignment.TopCenter)
+            )
         }
     } else {
         Box(modifier) {
@@ -98,10 +110,19 @@ internal fun BoxScope.RepoListWithErrors(
     onRepoItem: (ListRepo) -> Unit
 ) {
     when (refreshLoadState) {
-        is LoadState.Loading -> ProgressIndicator(Modifier.align(Alignment.Center))
+        is LoadState.Loading -> ProgressIndicator(
+            Modifier
+                .testTag(RepoListScreenTags.PROGRESS_INDICATOR)
+                .align(Alignment.Center)
+        )
 
-        is LoadState.Error -> RetryButton(
-            Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()),
+        is LoadState.Error -> RetryView(
+            Modifier
+                .align(Alignment.Center)
+                .verticalScroll(
+                    rememberScrollState()
+                ),
+            testTag = RepoListScreenTags.RETRY_BUTTON,
             refreshLoadState.error,
             onRefresh
         )
@@ -174,12 +195,21 @@ internal fun getPullRefreshState(repositories: LazyPagingItems<ListRepo>, onRefr
 @Composable
 internal fun RepositoryList(repositories: LazyPagingItems<ListRepo>, listState: LazyListState, onRetry: () -> Unit = {}, onRepoItem: (ListRepo) -> Unit = {}) {
     LazyColumn(
+        modifier = Modifier.testTag(RepoListScreenTags.REPOSITORY_LIST),
         state = listState,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        loadingItem("prepend", repositories.loadState.prepend, bottomDivider = true, onClick = onRetry)
+        loadingItem(
+            "loadingItem prepend",
+            repositories.loadState.prepend,
+            bottomDivider = true,
+            loadingTestTag = RepoListScreenTags.PREPEND_LOADING,
+            errorTestTag = RepoListScreenTags.PREPEND_ERROR,
+            onClick = onRetry
+        )
         items(
             count = repositories.itemCount,
+            key = repositories.itemKey { it.id }
         ) { index ->
             repositories[index]?.let {
                 RepositoryItem(it, onRepoItem)
@@ -188,18 +218,37 @@ internal fun RepositoryList(repositories: LazyPagingItems<ListRepo>, listState: 
                 }
             }
         }
-        loadingItem("append", repositories.loadState.append, topDivider = true, onClick = onRetry)
+        loadingItem(
+            "loadingItem append",
+            repositories.loadState.append,
+            topDivider = true,
+            loadingTestTag = RepoListScreenTags.APPEND_LOADING,
+            errorTestTag = RepoListScreenTags.APPEND_ERROR,
+            onClick = onRetry
+        )
     }
 }
 
-internal fun LazyListScope.loadingItem(key: String, state: LoadState, topDivider: Boolean = false, bottomDivider: Boolean = false, onClick: () -> Unit = {}) {
+internal fun LazyListScope.loadingItem(
+    key: String,
+    state: LoadState,
+    topDivider: Boolean = false,
+    bottomDivider: Boolean = false,
+    loadingTestTag: String,
+    errorTestTag: String,
+    onClick: () -> Unit = {}
+) {
     item(key) {
         if (topDivider && state !is LoadState.NotLoading) {
             RepositoryDivider()
         }
         when (state) {
-            is LoadState.Loading -> ProgressIndicator()
-            is LoadState.Error -> RetryButton(throwable = state.error, onClick = onClick)
+            is LoadState.Loading -> ProgressIndicator(modifier = Modifier.testTag(loadingTestTag))
+            is LoadState.Error -> RetryView(
+                testTag = errorTestTag,
+                throwable = state.error,
+                onClick = onClick
+            )
             is LoadState.NotLoading -> {}
         }
         if (bottomDivider && state !is LoadState.NotLoading) {
@@ -258,4 +307,24 @@ internal fun RepositoryItemPreview() {
     MainTheme {
         RepositoryItem(listRepo0)
     }
+}
+
+internal object RepoListScreenTags {
+
+    private const val PREFIX = "RepoListScreen"
+
+    const val SCREEN = "$PREFIX:Screen"
+
+    const val PROGRESS_INDICATOR = "$PREFIX:ProgressIndicator"
+    const val RETRY_BUTTON = "$PREFIX:RetryButton"
+
+    const val PULL_REFRESH = "$PREFIX:PullRefresh"
+
+    const val REPOSITORY_LIST = "$PREFIX:RepositoryList"
+
+    const val PREPEND_LOADING = "$PREFIX:PrependLoading"
+    const val PREPEND_ERROR = "$PREFIX:PrependError"
+
+    const val APPEND_LOADING = "$PREFIX:AppendLoading"
+    const val APPEND_ERROR = "$PREFIX:AppendError"
 }

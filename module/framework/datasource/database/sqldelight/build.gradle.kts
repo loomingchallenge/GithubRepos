@@ -18,7 +18,6 @@ kotlin {
     jvm()
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -32,7 +31,6 @@ kotlin {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
             implementation(libs.sqldelight.coroutines.extensions)
-            implementation(libs.sqldelight.paging3)
         }
         commonTest.dependencies {
             implementation(project(":module:adapter:data_test"))

@@ -43,7 +43,7 @@ import com.githubrepos.adapter.presentation.viewmodel.RepoViewModel
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.framework.ui.screens.components.ProgressIndicator
 import com.githubrepos.framework.ui.screens.components.RefreshState
-import com.githubrepos.framework.ui.screens.components.RetryButton
+import com.githubrepos.framework.ui.screens.components.RetryView
 import com.githubrepos.framework.ui.screens.components.SmallProgressIndicator
 import com.githubrepos.framework.ui.screens.components.getPullRefreshState
 import com.githubrepos.framework.ui.screens.preview.repo0
@@ -102,14 +102,29 @@ internal fun BoxScope.RepoLce(
 ) {
     if (repo == null) {
         if (error != null) {
-            RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), error, onRefresh)
+            RetryView(
+                Modifier
+                    .align(Alignment.Center)
+                    .verticalScroll(rememberScrollState()),
+                testTag = RepoScreenTags.RETRY_VIEW,
+                error,
+                onRefresh
+            )
         } else if (isLoading && refreshing.value == RefreshState.NOT_LOADING) {
-            ProgressIndicator(Modifier.align(Alignment.Center))
+            ProgressIndicator(
+                Modifier
+                    .testTag(RepoScreenTags.PROGRESS_INDICATOR)
+                    .align(Alignment.Center)
+            )
         }
     } else {
         Repo(repo = repo)
         if (isLoading && refreshing.value == RefreshState.NOT_LOADING) {
-            SmallProgressIndicator(Modifier.align(Alignment.TopEnd))
+            SmallProgressIndicator(
+                Modifier
+                    .testTag(RepoScreenTags.SMALL_PROGRESS_INDICATOR)
+                    .align(Alignment.TopEnd)
+            )
         }
         error?.let {
             LaunchedEffect(it) {
@@ -218,6 +233,10 @@ internal object RepoScreenTags {
     private const val PREFIX = "RepoScreen"
 
     const val SCREEN = "$PREFIX:Screen"
+
+    const val PROGRESS_INDICATOR = "$PREFIX:ProgressIndicator"
+    const val SMALL_PROGRESS_INDICATOR = "$PREFIX:SmallProgressIndicator"
+    const val RETRY_VIEW = "$PREFIX:RetryView"
 
     const val PULL_REFRESH = "$PREFIX:PullRefresh"
     const val REPO = "$PREFIX:Repo"

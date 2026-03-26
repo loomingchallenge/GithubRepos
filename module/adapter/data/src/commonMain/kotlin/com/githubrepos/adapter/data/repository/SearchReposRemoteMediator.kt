@@ -14,10 +14,7 @@ import com.githubrepos.core.entity.RepoPage
 import kotlinx.coroutines.withContext
 
 // GitHub page API is 1 based: https://developer.github.com/v3/#pagination
-private const val GITHUB_STARTING_PAGE_INDEX = 1
-
-private const val NEXT_PAGE_NOT_EXIST = -1
-private const val NEXT_PAGE_CANNOT_BE_FOUND = -2
+private const val STARTING_PAGE_INDEX = 1
 
 @OptIn(ExperimentalPagingApi::class)
 internal class SearchReposRemoteMediator(
@@ -29,21 +26,20 @@ internal class SearchReposRemoteMediator(
     private val dispatchers: AppDispatchers
 ) : RemoteMediator<Int, ListRepo>() {
 
-    private var endPage: Int? = null
-
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, ListRepo>): MediatorResult {
         return withContext(dispatchers.io) {
-            val page = getNextPage(loadType, state)
-            if (page == NEXT_PAGE_NOT_EXIST) {
+            val pagesToLoad = getPagesToLoad(loadType, state)
+            if (loadType == LoadType.PREPEND && pagesToLoad.first < STARTING_PAGE_INDEX) {
                 MediatorResult.Success(endOfPaginationReached = true)
             } else {
                 try {
-                    loadPage(loadType, state, page)
-                    MediatorResult.Success(endOfPaginationReached = endPage?.let { page >= it } ?: false)
+                    val loadedPagesCount = loadPages(loadType, state, pagesToLoad)
+                    val endOfPaginationReached = (loadedPagesCount == 0)
+                    MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
                 } catch (exception: Exception) {
                     MediatorResult.Error(exception)
                 }
@@ -51,63 +47,74 @@ internal class SearchReposRemoteMediator(
         }
     }
 
-    private suspend fun loadPage(loadType: LoadType, state: PagingState<Int, ListRepo>, page: Int) {
-        val response = service.searchRepos(query, page, state.config.pageSize)
+    private suspend fun loadPages(loadType: LoadType, state: PagingState<Int, ListRepo>, pagesToLoad: IntRange): Int {
+        val pageResponses = pagesToLoad.map { page ->
+            Pair(page, service.searchRepos(query, page, state.config.pageSize))
+        }.toList()
+
+        var loadedPagesCount = 0
         dbWithTransaction.withTransaction {
             if (loadType == LoadType.REFRESH) {
                 listRepoDao.deleteAll()
                 repoPageDao.deleteAll()
             }
-            if (response.items.isNotEmpty()) {
-                listRepoDao.insert(response.items)
-                val repoPages = response.items.map {
-                    RepoPage(it.id, page)
+            for ((page, response) in pageResponses) {
+                if (response.items.isNotEmpty()) {
+                    listRepoDao.insert(response.items)
+                    val repoPages = response.items.map { item ->
+                        RepoPage(item.id, page)
+                    }
+                    repoPageDao.insert(repoPages)
+                    loadedPagesCount++
                 }
-                repoPageDao.insert(repoPages)
-            } else {
-                endPage = page - 1
             }
         }
+        return loadedPagesCount
     }
 
-    private fun getNextPage(loadType: LoadType, state: PagingState<Int, ListRepo>): Int =
+    private fun getPagesToLoad(loadType: LoadType, state: PagingState<Int, ListRepo>): IntRange =
         when (loadType) {
             LoadType.REFRESH -> {
-                endPage = null
-                val page = getPageClosestToCurrentPosition(state)
-                page ?: GITHUB_STARTING_PAGE_INDEX
+                getAnchorPagesToLoad(state) ?: STARTING_PAGE_INDEX..(state.config.initialLoadSize / state.config.pageSize)
             }
 
             LoadType.PREPEND -> {
                 when (val page = getPageForFirstItem()) {
-                    NEXT_PAGE_CANNOT_BE_FOUND -> GITHUB_STARTING_PAGE_INDEX
-                    GITHUB_STARTING_PAGE_INDEX -> NEXT_PAGE_NOT_EXIST
-                    else -> page - 1
+                    null -> STARTING_PAGE_INDEX.toRange()
+                    else -> (page - 1).toRange()
                 }
             }
 
             LoadType.APPEND -> {
-                when (val page = getPageKeyForLastItem()) {
-                    NEXT_PAGE_CANNOT_BE_FOUND -> GITHUB_STARTING_PAGE_INDEX
-                    endPage -> NEXT_PAGE_NOT_EXIST
-                    else -> page + 1
+                when (val page = getPageForLastItem()) {
+                    null -> STARTING_PAGE_INDEX.toRange()
+                    else -> (page + 1).toRange()
                 }
             }
         }
 
-    private fun getPageClosestToCurrentPosition(state: PagingState<Int, ListRepo>): Int? {
-        return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { repositoryId ->
-                repoPageDao.getRepoPage(repositoryId)?.page
-            }
-        }
+    private fun getAnchorPagesToLoad(state: PagingState<Int, ListRepo>): IntRange? {
+        val anchor = state.anchorPosition ?: return null
+        val pageSize = state.config.pageSize
+        val initialLoadSize = state.config.initialLoadSize
+        val pageOffset = maxOf(1, ((initialLoadSize / pageSize) - 1) / 2)
+
+        val anchorItem = state.closestItemToPosition(anchor) ?: return null
+        val anchorPage = repoPageDao.getRepoPage(anchorItem.id)?.page ?: return null
+
+        val startPage = maxOf(STARTING_PAGE_INDEX, anchorPage - pageOffset)
+        val endPage = maxOf(STARTING_PAGE_INDEX + 1,anchorPage + pageOffset)
+
+        return startPage..endPage
     }
 
-    private fun getPageForFirstItem(): Int {
-        return repoPageDao.getMinPage()?.toInt() ?: NEXT_PAGE_CANNOT_BE_FOUND
+    private fun getPageForFirstItem(): Int? {
+        return repoPageDao.getMinPage()?.toInt()
     }
 
-    private fun getPageKeyForLastItem(): Int {
-        return repoPageDao.getMaxPage()?.toInt() ?: NEXT_PAGE_CANNOT_BE_FOUND
+    private fun getPageForLastItem(): Int? {
+        return repoPageDao.getMaxPage()?.toInt()
     }
 }
+
+fun Int.toRange(): IntRange = this..this

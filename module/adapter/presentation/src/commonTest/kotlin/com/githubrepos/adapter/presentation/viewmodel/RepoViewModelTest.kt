@@ -5,9 +5,9 @@ import app.cash.turbine.turbineScope
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
 import com.githubrepos.adapter.presentation.di.createRepoViewModel
-import com.githubrepos.core.test.repo0
-import com.githubrepos.core.test.repo0New
-import com.githubrepos.core.test.repo0Old
+import com.githubrepos.core.test.repo1
+import com.githubrepos.core.test.repo1New
+import com.githubrepos.core.test.repo1Old
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
@@ -27,8 +27,8 @@ internal class RepoViewModelTest {
         assertEquals("Repo", repoViewModel.title)
         createRepoViewModel( this).repoLceFlows.content.test {
             assertEquals(null, awaitItem())
-            assertEquals(repo0Old, awaitItem())
-            assertEquals(repo0, awaitItem())
+            assertEquals(repo1Old, awaitItem())
+            assertEquals(repo1, awaitItem())
             ensureAllEventsConsumed()
         }
         createRepoViewModel( this).repoLceFlows.loading.test {
@@ -52,16 +52,16 @@ internal class RepoViewModelTest {
             val content = repoViewModel.repoLceFlows.content.testIn(backgroundScope)
             val error = repoViewModel.repoLceFlows.error.testIn(backgroundScope)
             assertEquals(false, loading.awaitItem())
-            assertEquals(repo0, content.awaitItem())
+            assertEquals(repo1, content.awaitItem())
             assertEquals(null, error.awaitItem())
             repoViewModel.loadRepo(false)
-            assertEquals(repo0Old, content.awaitItem())
+            assertEquals(repo1Old, content.awaitItem())
             assertEquals(true, loading.awaitItem())
-            assertEquals(repo0, content.awaitItem())
+            assertEquals(repo1, content.awaitItem())
             assertEquals(false, loading.awaitItem())
             repoViewModel.loadRepo(true)
             assertEquals(true, loading.awaitItem())
-            assertEquals(repo0New, content.awaitItem())
+            assertEquals(repo1New, content.awaitItem())
             assertEquals(false, loading.awaitItem())
         }
     }
@@ -77,7 +77,7 @@ internal class RepoViewModelTest {
             assertEquals(false, loading.awaitItem())
             assertEquals(null, content.awaitItem())
             assertEquals(null, error.awaitItem())
-            assertEquals(repo0Old, content.awaitItem())
+            assertEquals(repo1Old, content.awaitItem())
             repoViewModel.loadRepo(true)
             assertEquals(true, loading.awaitItem())
             assertIs<NoInternetException>(error.awaitItem())
@@ -86,6 +86,6 @@ internal class RepoViewModelTest {
     }
 
     private fun createRepoViewModel(scope: CoroutineScope): RepoViewModel {
-        return createRepoViewModel(repo0.id, "Repo", scope, getRepoUseCase)
+        return createRepoViewModel(repo1.id, "Repo", scope, getRepoUseCase)
     }
 }

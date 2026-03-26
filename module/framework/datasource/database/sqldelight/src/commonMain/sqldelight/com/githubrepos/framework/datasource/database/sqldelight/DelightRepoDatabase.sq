@@ -19,23 +19,34 @@ countListRepos:
 SELECT count(*)
 FROM ListRepo;
 
+countListReposByQuery:
+SELECT count(*)
+FROM ListRepo
+WHERE name LIKE :query OR description LIKE :query;
+
 getListRepos:
 SELECT *
 FROM ListRepo
 ORDER BY stars DESC, name ASC
 LIMIT :limit OFFSET :offset;
 
-countListReposByName:
-SELECT count(*)
-FROM ListRepo
-WHERE name LIKE :query OR description LIKE :query;
-
-getListReposByName:
+getListReposByQuery:
 SELECT *
 FROM ListRepo
 WHERE name LIKE :query OR description LIKE :query
 ORDER BY stars DESC, name ASC
 LIMIT :limit OFFSET :offset;
+
+getListRepoOffset:
+SELECT COUNT(*)
+FROM ListRepo
+WHERE stars > :stars OR (stars = :stars AND name < :name);
+
+getListRepoOffsetByQuery:
+SELECT COUNT(*)
+FROM ListRepo
+WHERE (name LIKE :query OR description LIKE :query)
+  AND (stars > :stars OR (stars = :stars AND name < :name));
 
 --------------------------------------------------------------------------------------------------------------
 

@@ -8,8 +8,8 @@ const val HOST_NAME_PATTERN = "*.github.com"
 
 // Certificate #2: EC 256 bits (SHA256withECDSA)
 // https://www.ssllabs.com/ssltest/analyze.html?d=api.github.com
-// Valid until 	Sun, 05 Apr 2026 23:59:59 UTC
-const val PUBLIC_KEY_PIN = "sha256/H8zmHRgw4cFDQn+MvcyfhImeWNY4kN9HXO/J9xX32gk="
+// Valid until 	Jun 3 23:59:59 2026 GMT
+const val PUBLIC_KEY_PIN = "sha256/tt9RksdSBGiieTiyWkU8g3MOmCrfMcvXDGC4ZALs9rg="
 
 interface NetworkServiceProvider {
 

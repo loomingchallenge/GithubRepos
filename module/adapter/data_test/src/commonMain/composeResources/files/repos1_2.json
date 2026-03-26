@@ -6,7 +6,7 @@
       "id": 31792824,
       "node_id": "MDEwOlJlcG9zaXRvcnkzMTc5MjgyNA==",
       "name": "flutter",
-      "full_name": "flutter/flutter",
+      "full_name": "1.flutter/flutter",
       "private": false,
       "owner": {
         "login": "flutter",
@@ -133,7 +133,7 @@
       "id": 29028775,
       "node_id": "MDEwOlJlcG9zaXRvcnkyOTAyODc3NQ==",
       "name": "react-native",
-      "full_name": "facebook/react-native",
+      "full_name": "2.facebook/react-native",
       "private": false,
       "owner": {
         "login": "facebook",

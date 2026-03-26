@@ -3,21 +3,12 @@ package com.githubrepos.core.test
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.core.entity.RepoPage
+import kotlin.random.Random
 
-val listRepo0 by lazy { ListRepo(
-    0,
-    "okhttp",
-    "square/okhttp",
-    "OkHttp is an efficient HTTP & HTTP/2 client for Android and Java applications.",
-    44179,
-    10311,
-    "Kotlin"
-) }
-
-val repo0 by lazy { Repo(
+val repo1 by lazy { Repo(
     31792824,
     "flutter",
-    "flutter/flutter",
+    "1.flutter/flutter",
     "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
     "https://github.com/flutter/flutter",
     "https://flutter.dev",
@@ -28,10 +19,10 @@ val repo0 by lazy { Repo(
     "Dart"
 ) }
 
-val repo0Old by lazy { Repo(
+val repo1Old by lazy { Repo(
     31792824,
     "flutter",
-    "flutter/flutter",
+    "1.flutter/flutter",
     "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
     "https://github.com/flutter/flutter",
     "https://flutter.dev",
@@ -42,10 +33,10 @@ val repo0Old by lazy { Repo(
     "Dart"
 ) }
 
-val repo0New by lazy { Repo(
+val repo1New by lazy { Repo(
     31792824,
     "flutter",
-    "flutter/flutter",
+    "1.flutter/flutter",
     "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
     "https://github.com/flutter/flutter",
     "https://flutter.dev",
@@ -56,10 +47,10 @@ val repo0New by lazy { Repo(
     "Dart"
 ) }
 
-val repo1 by lazy { Repo(
+val repo2 by lazy { Repo(
     29028775,
     "react-native",
-    "facebook/react-native",
+    "2.facebook/react-native",
     "A framework for building native applications using React",
     "https://github.com/facebook/react-native",
     "https://reactnative.dev",
@@ -70,10 +61,10 @@ val repo1 by lazy { Repo(
     "C++"
 ) }
 
-val repo48 by lazy { Repo(
+val repo49 by lazy { Repo(
     90792131,
     "architecture-components-samples",
-    "android/architecture-components-samples",
+    "49.android/architecture-components-samples",
     "Samples for Android Architecture Components. ",
     "https://github.com/android/architecture-components-samples",
     "https://d.android.com/arch",
@@ -84,10 +75,10 @@ val repo48 by lazy { Repo(
     "Kotlin"
 ) }
 
-val repo49 by lazy { Repo(
+val repo50 by lazy { Repo(
     14964475,
     "Avalonia",
-    "AvaloniaUI/Avalonia",
+    "50.AvaloniaUI/Avalonia",
     "Develop Desktop, Embedded, Mobile and WebAssembly apps with C# and XAML. The most popular .NET Foundation community project.",
     "https://github.com/AvaloniaUI/Avalonia",
     "https://avaloniaui.net",
@@ -98,12 +89,46 @@ val repo49 by lazy { Repo(
     "C#"
 ) }
 
-val repoPage0 by lazy { RepoPage(
-    31792824,
-    0
-) }
-
 val repoPage1 by lazy { RepoPage(
-    29028775,
+    31792824,
     1
 ) }
+
+val repoPage2 by lazy { RepoPage(
+    29028775,
+    2
+) }
+
+val listRepo1 by lazy { ListRepo(
+    31792824,
+    "flutter",
+    "1.flutter/flutter",
+    "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
+    159256,
+    26722,
+    "Dart"
+) }
+
+fun generateListRepos(count: Int) = (1..count).map {
+    ListRepo(
+        id = it.toLong(),
+        name = "name$it",
+        fullName = "fullName$it",
+        description = "description$it " + randomParagraph(),
+        stars = 10000000 - it,
+        forks = it,
+        language = "language$it"
+    )
+}
+
+private fun randomParagraph(): String {
+    val targetLength = Random.nextInt(0, 200)
+    val lorem = "Lorem ipsum dolor sit amet consectetur adipiscing budo "
+    val builder = StringBuilder()
+
+    while (builder.length < targetLength) {
+        builder.append(lorem)
+    }
+
+    return builder.toString().take(targetLength)
+}

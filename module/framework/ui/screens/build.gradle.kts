@@ -22,7 +22,6 @@ kotlin {
     jvm()
     
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -48,13 +47,14 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             // Paging
-            implementation(libs.paging.compose.common)
+            implementation(libs.androidx.paging.compose)
         }
         commonTest.dependencies {
-            implementation(project(":module:core_test"))
+            implementation(project(":module:adapter:data_test"))
 
             implementation(libs.kotlin.test)
             implementation(libs.compose.ui.test)
+            implementation(libs.androidx.paging.testing)
         }
         jvmTest.dependencies {
             implementation(compose.desktop.currentOs)
@@ -75,6 +75,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    testOptions {
+        unitTests.all {
+            it.enabled = false
+        }
     }
 }
 

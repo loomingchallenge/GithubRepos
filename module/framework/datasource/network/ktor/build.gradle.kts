@@ -24,7 +24,6 @@ kotlin {
     jvm()
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -38,7 +37,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
 
-            // TODO Remove isTestTask and move to commonTest when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
+            // TODO Remove condition isTestTask and move to commonTest when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
             if (isTestTask()) {
                 implementation(project(":module:adapter:data_test"))
             }

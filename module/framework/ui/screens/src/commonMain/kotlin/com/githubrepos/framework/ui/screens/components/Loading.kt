@@ -88,7 +88,6 @@ internal fun ProgressIndicator(
 ) {
     CircularProgressIndicator(
         modifier = Modifier
-            .testTag(LoadingTestTags.PROGRESS_INDICATOR)
             .then(modifier),
         color = color
     )
@@ -101,7 +100,6 @@ internal fun SmallProgressIndicator(
 ) {
     CircularProgressIndicator(
         modifier = Modifier
-            .testTag(LoadingTestTags.SMALL_PROGRESS_INDICATOR)
             .padding(8.dp)
             .size(20.dp)
             .then(modifier),
@@ -111,11 +109,11 @@ internal fun SmallProgressIndicator(
 }
 
 @Composable
-internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, onClick: () -> Unit) {
+internal fun RetryView(modifier: Modifier = Modifier, testTag: String = LoadingTestTags.RETRY_VIEW, throwable: Throwable, onClick: () -> Unit) {
     Column(
         Modifier
-            .testTag(LoadingTestTags.RETRY_BUTTON)
             .padding(8.dp)
+            .testTag(testTag)
             .then(modifier)) {
         Surface(
             modifier = Modifier
@@ -126,14 +124,16 @@ internal fun RetryButton(modifier: Modifier = Modifier, throwable: Throwable, on
             Text(
                 text = throwable.message ?: stringResource(resource = Res.string.unknown_error),
                 modifier = Modifier
-                    .testTag(LoadingTestTags.RETRY_BUTTON_TEXT)
+                    .testTag(LoadingTestTags.getRetryViewTextTag(testTag))
                     .padding(8.dp)
                     .fillMaxWidth(),
                 color = MaterialTheme.colors.onError
             )
         }
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .testTag(LoadingTestTags.getRetryViewButtonTag(testTag))
+                .fillMaxWidth(),
             onClick = onClick
         ) {
             Text(text = stringResource(resource = Res.string.repository_list_retry))
@@ -159,9 +159,9 @@ internal fun SmallProgressIndicatorPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun RetryButtonPreview() {
+internal fun RetryViewPreview() {
     MainTheme {
-        RetryButton(throwable = Throwable("Unable to resolve host \"api.github.com\": No address associated with hostname")) {
+        RetryView(throwable = Throwable("Unable to resolve host \"api.github.com\": No address associated with hostname")) {
         }
     }
 }
@@ -170,8 +170,13 @@ internal object LoadingTestTags {
 
     private const val PREFIX = "Loading"
 
-    const val PROGRESS_INDICATOR = "$PREFIX:ProgressIndicator"
-    const val SMALL_PROGRESS_INDICATOR = "$PREFIX:SmallProgressIndicator"
-    const val RETRY_BUTTON = "$PREFIX:RetryButton"
-    const val RETRY_BUTTON_TEXT = "$PREFIX:RetryButtonText"
+    const val RETRY_VIEW = "$PREFIX:RetryView"
+
+    private const val RETRY_VIEW_TEXT = "$PREFIX:RetryViewText"
+
+    private const val RETRY_VIEW_BUTTON = "$PREFIX:RetryViewButton"
+
+    fun getRetryViewTextTag(retryViewTag: String) = "$retryViewTag:$RETRY_VIEW_TEXT"
+
+    fun getRetryViewButtonTag(retryViewTag: String) = "$retryViewTag:$RETRY_VIEW_BUTTON"
 }

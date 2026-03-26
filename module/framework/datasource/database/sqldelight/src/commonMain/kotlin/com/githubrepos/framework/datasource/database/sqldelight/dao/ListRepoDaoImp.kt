@@ -1,11 +1,11 @@
 package com.githubrepos.framework.datasource.database.sqldelight.dao
 
-import app.cash.paging.PagingSource
-import app.cash.sqldelight.paging3.QueryPagingSource
+import androidx.paging.PagingSource
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.core.AppDispatchers
 import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.framework.datasource.database.sqldelight.DelightRepoDatabaseQueries
+import com.githubrepos.framework.datasource.database.sqldelight.QueryPagingSource
 
 internal class ListRepoDaoImp(
     private val queries: DelightRepoDatabaseQueries,
@@ -32,22 +32,28 @@ internal class ListRepoDaoImp(
 
     override fun getListRepos(): PagingSource<Int, ListRepo> {
         return QueryPagingSource(
-            countQuery = queries.countListRepos(),
-            transacter = queries,
             context = dispatchers.io,
-            queryProvider = { limit, offset ->
+            dbTransaction = queries::transaction,
+            countQuery = queries.countListRepos(),
+            getItemsQuery = { limit, offset ->
                 queries.getListRepos(limit, offset, ::createListRepo)
+            },
+            getItemOffsetQuery = { item ->
+                queries.getListRepoOffset(item.stars.toLong(), item.name)
             }
         )
     }
 
     override fun getListRepos(queryString: String): PagingSource<Int, ListRepo> {
         return QueryPagingSource(
-            countQuery = queries.countListReposByName(queryString),
-            transacter = queries,
             context = dispatchers.io,
-            queryProvider = { limit, offset ->
-                queries.getListReposByName(queryString, limit, offset, ::createListRepo)
+            dbTransaction = queries::transaction,
+            countQuery = queries.countListReposByQuery(queryString),
+            getItemsQuery = { limit, offset ->
+                queries.getListReposByQuery(queryString, limit, offset, ::createListRepo)
+            },
+            getItemOffsetQuery = { item ->
+                queries.getListRepoOffsetByQuery(queryString, item.stars.toLong(), item.name)
             }
         )
     }

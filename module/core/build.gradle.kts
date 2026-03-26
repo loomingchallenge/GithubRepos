@@ -17,7 +17,6 @@ kotlin {
     jvm()
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -29,7 +28,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.paging.common)
+            api(libs.androidx.paging.common)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
