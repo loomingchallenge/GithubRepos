@@ -12,9 +12,12 @@ import androidx.compose.ui.test.swipeDown
 import com.githubrepos.adapter.presentation.di.createErrorReporter
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.core.test.repo1
+import com.githubrepos.framework.ui.screens.BaseUITest
 import com.githubrepos.framework.ui.screens.components.LoadingTestTags
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 import com.githubrepos.framework.ui.screens.viewmodel.FakeRepoViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,15 +25,22 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class RepoScreenTest {
+class RepoScreenTest: BaseUITest() {
 
     private lateinit var viewModel: FakeRepoViewModel
     private lateinit var errorReporter: ErrorReporter
 
     @BeforeTest
     fun setUp() {
+        baseSetUp()
         viewModel = FakeRepoViewModel()
         errorReporter = createErrorReporter()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @AfterTest
+    fun tearDown() {
+        baseTearDown()
     }
 
     @OptIn(ExperimentalTestApi::class)

@@ -7,25 +7,25 @@ import androidx.navigation.navArgument
 import androidx.savedstate.read
 
 internal object RepoDestination : Destination {
-    private const val repoID = "repoID"
-    private const val repoName = "repoName"
+    private const val REPO_ID = "repoID"
+    private const val REPO_NAME = "repoName"
 
-    private const val routeName = "RepoDestination"
+    private const val ROUTE_NAME = "RepoDestination"
 
-    override val route = "$routeName/{$repoID}/{$repoName}"
+    override val route = "$ROUTE_NAME/{$REPO_ID}/{$REPO_NAME}"
 
-    fun getRoute(repoID: Long, repoName: String) = "${routeName}/$repoID/$repoName"
+    fun getRoute(repoID: Long, repoName: String) = "${ROUTE_NAME}/$repoID/$repoName"
 
     val arguments = listOf(
-        navArgument(repoID) { type = NavType.LongType },
-        navArgument(repoName) { type = NavType.StringType }
+        navArgument(REPO_ID) { type = NavType.LongType },
+        navArgument(REPO_NAME) { type = NavType.StringType }
     )
 
     fun getRepoID(navBackStackEntry: NavBackStackEntry) =
-        navBackStackEntry.arguments?.read { getLong(repoID) }
+        navBackStackEntry.arguments?.read { getLong(REPO_ID) }
 
     fun getRepoName(navBackStackEntry: NavBackStackEntry) =
-        navBackStackEntry.arguments?.read { getString(repoName) }
+        navBackStackEntry.arguments?.read { getString(REPO_NAME) }
 }
 
 internal fun NavHostController.navigateToRepoDestination(repoID: Long, repoName: String) {

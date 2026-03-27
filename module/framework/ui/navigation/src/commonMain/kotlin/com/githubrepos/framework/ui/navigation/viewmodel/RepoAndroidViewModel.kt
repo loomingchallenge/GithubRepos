@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githubrepos.adapter.presentation.ViewModelProvider
 
-internal class RepoVMProvider(
+internal class RepoAndroidViewModel(
     repoID: Long,
     title: String,
     viewModelProvider: ViewModelProvider

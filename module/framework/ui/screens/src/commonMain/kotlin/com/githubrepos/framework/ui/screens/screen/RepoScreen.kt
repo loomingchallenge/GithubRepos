@@ -26,7 +26,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.viewmodel.RepoViewModel
 import com.githubrepos.core.entity.Repo
@@ -65,9 +65,9 @@ fun RepoScreen(
     onBack: () -> Unit
 ) {
     setTopBar { RepoTopBar(repoViewModel.title, onBack) }
-    val isLoading = repoViewModel.repoLceFlows.loading.collectAsState().value // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
-    val repo = repoViewModel.repoLceFlows.content.collectAsState().value // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
-    val error = repoViewModel.repoLceFlows.error.collectAsState().value // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
+    val isLoading = repoViewModel.repoLceFlows.loading.collectAsStateWithLifecycle().value
+    val repo = repoViewModel.repoLceFlows.content.collectAsStateWithLifecycle().value
+    val error = repoViewModel.repoLceFlows.error.collectAsStateWithLifecycle().value
 
     val onRefresh = { repoViewModel.loadRepo(freshDataOnly = true) }
     val onError = { repoViewModel.repoLceFlows.clearError() }

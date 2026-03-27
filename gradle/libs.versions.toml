@@ -1,7 +1,7 @@
 [versions]
 versionCode = "37"
-versionName = "1.3.28"
-android-minSdk = "26"
+versionName = "1.3.29"
+android-minSdk = "27"
 android-compileSdk = "36"
 android-targetSdk = "36"
 android-gradle-plugin = "8.11.1"
