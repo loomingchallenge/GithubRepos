@@ -9,19 +9,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 
 class TopBarController {
 
-    val topBar: MutableState<@Composable () -> Unit> = mutableStateOf(@Composable{ })
+    val topBar: MutableState<@Composable () -> Unit> = mutableStateOf(@Composable { })
 }
 
 @Composable
-internal fun OverflowMenu(content: @Composable (MutableState<Boolean>) -> Unit) {
+internal fun OverflowMenu(
+    modifier: Modifier = Modifier,
+    content: @Composable (MutableState<Boolean>) -> Unit
+) {
     val showMenu = remember { mutableStateOf(false) }
 
-    IconButton(onClick = {
-        showMenu.value = !showMenu.value
-    }) {
+    IconButton(
+        modifier = modifier,
+        onClick = {
+            showMenu.value = !showMenu.value
+        }) {
         Icon(
             imageVector = Icons.Outlined.MoreVert,
             contentDescription = "more",

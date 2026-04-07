@@ -94,7 +94,7 @@ fun RepoListScreen(
             )
         }
     } else {
-        Box(modifier) {
+        Box(modifier.testTag(RepoListScreenTags.SCREEN)) {
             RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
         }
     }
@@ -122,7 +122,7 @@ internal fun BoxScope.RepoListWithErrors(
                 .verticalScroll(
                     rememberScrollState()
                 ),
-            testTag = RepoListScreenTags.RETRY_BUTTON,
+            testTag = RepoListScreenTags.RETRY_VIEW,
             refreshLoadState.error,
             onRefresh
         )
@@ -162,8 +162,11 @@ internal fun RepoListTopBar(onClickRefresh: () -> Unit = {}) {
     TopAppBar(
         title = @Composable { Text(text = stringResource(resource = Res.string.repository_list_screen_title)) },
         actions = @Composable {
-            OverflowMenu { showMenu ->
+            OverflowMenu(
+                modifier = Modifier.testTag(RepoListScreenTags.OVERFLOW_MENU)
+            ) { showMenu ->
                 DropdownMenuItem(
+                    modifier = Modifier.testTag(RepoListScreenTags.REFRESH_BUTTON),
                     content = {
                         Icon(Icons.Filled.Refresh, "refresh")
                         Spacer(modifier = Modifier.width(16.dp))
@@ -265,6 +268,7 @@ internal fun RepositoryDivider() {
 @Composable
 internal fun RepositoryItem(listRepo: ListRepo, onRepoItem: (ListRepo) -> Unit = {}) {
     Column(Modifier
+        .testTag(RepoListScreenTags.getRepositoryListItem(listRepo.id))
         .clickable {
             onRepoItem(listRepo)
         }
@@ -309,14 +313,14 @@ internal fun RepositoryItemPreview() {
     }
 }
 
-internal object RepoListScreenTags {
+object RepoListScreenTags {
 
     private const val PREFIX = "RepoListScreen"
 
     const val SCREEN = "$PREFIX:Screen"
 
     const val PROGRESS_INDICATOR = "$PREFIX:ProgressIndicator"
-    const val RETRY_BUTTON = "$PREFIX:RetryButton"
+    const val RETRY_VIEW = "$PREFIX:RetryView"
 
     const val PULL_REFRESH = "$PREFIX:PullRefresh"
 
@@ -327,4 +331,10 @@ internal object RepoListScreenTags {
 
     const val APPEND_LOADING = "$PREFIX:AppendLoading"
     const val APPEND_ERROR = "$PREFIX:AppendError"
+
+    const val OVERFLOW_MENU = "$PREFIX:OverFlowMenu"
+
+    const val REFRESH_BUTTON = "$PREFIX:RefreshButton"
+
+    fun getRepositoryListItem(id: Long) = "$PREFIX:ListItem:$id"
 }

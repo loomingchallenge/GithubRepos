@@ -1,29 +1,11 @@
 package com.githubrepos
 
-import com.githubrepos.di.initKoin
+import com.githubrepos.di.KoinManager
+import com.githubrepos.di.getIosModuleFactories
 
 fun initApp() {
-    initKoin()
+    KoinManager().run {
+        addModuleFactories(getIosModuleFactories())
+        startKoin()
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

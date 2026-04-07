@@ -5,7 +5,7 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 
-class DatabaseDriverFactoryImp(private val databaseName: String): DatabaseDriverFactory {
+internal class DatabaseDriverFactoryImp(private val databaseName: String): DatabaseDriverFactory {
 
     override fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
         return NativeSqliteDriver(schema, databaseName)

@@ -61,6 +61,20 @@ val repo2 by lazy { Repo(
     "C++"
 ) }
 
+val repo20 by lazy { Repo(
+    70198875,
+    "lottie-android",
+    "20.airbnb/lottie-android",
+    "Render After Effects animations natively on Android and iOS, Web, and React Native",
+    "https://api.github.com/repos/airbnb/lottie-android",
+    "http://airbnb.io/lottie/",
+    "https://github.com/airbnb/lottie-android.git",
+    "https://api.github.com/repos/airbnb/lottie-android/deployments",
+    34457,
+    5422,
+    "Java"
+) }
+
 val repo49 by lazy { Repo(
     90792131,
     "architecture-components-samples",

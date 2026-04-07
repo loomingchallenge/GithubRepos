@@ -2,6 +2,7 @@ import com.githubrepos.`build-logic`.isTestTask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -76,6 +77,8 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.target.get()))
         }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
 
     jvm()
@@ -91,6 +94,12 @@ kotlin {
         }
     }
 
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        binaries.all {
+            linkerOpts("-lsqlite3")
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             // Modules
@@ -100,6 +109,7 @@ kotlin {
             implementation(project(":module:framework:datasource:database:sqldelight"))
             implementation(project(":module:framework:ui:screens"))
             implementation(project(":module:framework:ui:navigation"))
+            implementation(project(":module:framework:datasource:preferences:multiplatform_settings"))
 
             if (flavor == Flavor.FULL) {
                 implementation(project(":module:flavor:full"))
@@ -118,20 +128,8 @@ kotlin {
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
-            // implementation(libs.koin.compose) requires old version of compose.runtime
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-
-            // Koin
-            implementation(libs.koin.test)
-            // implementation(libs.koin.test.junit5)
         }
         androidMain.dependencies {
-            // Modules
-            implementation(project(":module:framework:datasource:database:sqldelight"))
-            implementation(project(":module:framework:datasource:preferences:multiplatform_settings"))
-
             // Compose
             implementation(libs.androidx.activity.compose)
 
@@ -139,15 +137,8 @@ kotlin {
             implementation(libs.koin.android)
         }
         iosMain.dependencies {
-            // Modules
-            implementation(project(":module:framework:datasource:database:sqldelight"))
-            implementation(project(":module:framework:datasource:preferences:multiplatform_settings"))
         }
         jvmMain.dependencies {
-            // Modules
-            implementation(project(":module:framework:datasource:database:sqldelight"))
-            implementation(project(":module:framework:datasource:preferences:multiplatform_settings"))
-
             // Compose
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -155,6 +146,20 @@ kotlin {
             // Koin
             implementation(libs.koin.logger.slf4j)
             implementation(libs.logback.classic)
+        }
+        commonTest.dependencies {
+            implementation(project(":module:adapter:data_test"))
+            implementation(project(":module:framework:ui:ui_test"))
+
+            implementation(libs.kotlin.test)
+            implementation(libs.compose.ui.test)
+            implementation(libs.multiplatform.settings.test)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.test.runner)
+        }
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
         }
     }
 }
@@ -169,6 +174,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
+        testInstrumentationRunner = "com.githubrepos.InstrumentationTestRunner"
     }
     packaging {
         resources {
@@ -214,4 +220,10 @@ compose.desktop {
             packageVersion = libs.versions.versionName.get()
         }
     }
+}
+
+dependencies {
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4.android)
 }

@@ -13,9 +13,9 @@ import androidx.paging.LoadState
 import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
 import com.githubrepos.adapter.data.test.datasource.network.service.FakeGithubService
 import com.githubrepos.core.test.generateListRepos
-import com.githubrepos.framework.ui.screens.BaseUITest
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 import com.githubrepos.framework.ui.screens.viewmodel.FakeRepoListViewModel
+import com.githubrepos.framework.ui.test.UITest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlin.test.AfterTest
@@ -23,7 +23,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNull
 
-class RepoListScreenTest: BaseUITest() {
+class RepoListScreenTest: UITest() {
 
     companion object {
         private val networkStateProvider = FakeNetworkStateProvider()
@@ -38,15 +38,15 @@ class RepoListScreenTest: BaseUITest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeTest
-    fun setUp() {
-        baseSetUp()
+    override fun setUp() {
+        super.setUp()
         viewModel = FakeRepoListViewModel(true)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @AfterTest
-    fun tearDown() {
-        baseTearDown()
+    override fun tearDown() {
+        super.tearDown()
     }
 
     @OptIn(ExperimentalTestApi::class, ExperimentalCoroutinesApi::class)
@@ -57,7 +57,7 @@ class RepoListScreenTest: BaseUITest() {
         viewModel.emitListRepo(refresh = LoadState.Loading)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertIsDisplayed()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertDoesNotExist()
     }
 
@@ -69,7 +69,7 @@ class RepoListScreenTest: BaseUITest() {
         viewModel.emitListRepo(listRepos)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
     }
 
@@ -80,7 +80,7 @@ class RepoListScreenTest: BaseUITest() {
 
         viewModel.emitListRepo(refresh = LoadState.Error(Exception("Error")))
         waitForIdle()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertIsDisplayed()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertDoesNotExist()
     }
@@ -97,7 +97,7 @@ class RepoListScreenTest: BaseUITest() {
         onNodeWithTag(RepoListScreenTags.PREPEND_ERROR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.APPEND_LOADING).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.APPEND_ERROR).assertDoesNotExist()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
     }
 
@@ -113,7 +113,7 @@ class RepoListScreenTest: BaseUITest() {
         onNodeWithTag(RepoListScreenTags.PREPEND_LOADING).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.APPEND_LOADING).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.APPEND_ERROR).assertDoesNotExist()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
     }
 
@@ -125,7 +125,7 @@ class RepoListScreenTest: BaseUITest() {
         viewModel.emitListRepo(listRepos, append = LoadState.Loading)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PREPEND_ERROR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PREPEND_LOADING).assertDoesNotExist()
@@ -143,7 +143,7 @@ class RepoListScreenTest: BaseUITest() {
         viewModel.emitListRepo(listRepos, append = LoadState.Error(Exception("Error")))
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
-        onNodeWithTag(RepoListScreenTags.RETRY_BUTTON).assertDoesNotExist()
+        onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PROGRESS_INDICATOR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PREPEND_ERROR).assertDoesNotExist()
         onNodeWithTag(RepoListScreenTags.PREPEND_LOADING).assertDoesNotExist()
@@ -161,12 +161,12 @@ class RepoListScreenTest: BaseUITest() {
         viewModel.emitListRepo(listRepos)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
-        onNodeWithTag(RepoListScreenTags.PULL_REFRESH).assertExists()
         viewModel.setRepositoryError(Exception())
         onNodeWithTag(RepoListScreenTags.SCREEN).performTouchInput {
             swipeDown()
         }
         assertNull(viewModel.repositoryError)
+        onNodeWithTag(RepoListScreenTags.PULL_REFRESH).assertExists()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
     }
 

@@ -143,7 +143,10 @@ internal fun RepoTopBar(title: String?, onBack: () -> Unit) {
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
         navigationIcon =  {
-            IconButton(onClick = onBack) {
+            IconButton(
+                modifier = Modifier.testTag(RepoScreenTags.BACK_BUTTON),
+                onClick = onBack
+            ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
             }
         }
@@ -228,7 +231,7 @@ internal fun RepoPreview() {
     }
 }
 
-internal object RepoScreenTags {
+object RepoScreenTags {
 
     private const val PREFIX = "RepoScreen"
 
@@ -249,4 +252,6 @@ internal object RepoScreenTags {
     const val REPO_STARS = "$PREFIX:repo:stars"
     const val REPO_FORKS = "$PREFIX:repo:forks"
     const val REPO_LANGUAGE = "$PREFIX:repo:language"
+
+    const val BACK_BUTTON = "$PREFIX:BackButton"
 }

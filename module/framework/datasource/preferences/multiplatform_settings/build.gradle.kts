@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
-            implementation(libs.multiplatform.settings)
+            api(libs.multiplatform.settings)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -6,9 +6,9 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 
-class DatabaseDriverFactoryImp(
+internal class DatabaseDriverFactoryImp(
     private val context: Context,
-    private val databaseName: String
+    private val databaseName: String?
 ) : DatabaseDriverFactory {
 
     override fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {

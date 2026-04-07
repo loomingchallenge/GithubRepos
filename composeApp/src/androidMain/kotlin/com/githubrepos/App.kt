@@ -1,12 +1,16 @@
 package com.githubrepos
 
 import android.app.Application
-import com.githubrepos.di.initKoin
+import com.githubrepos.di.AndroidKoinManager
+import com.githubrepos.di.getAndroidModuleFactories
 
 class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initKoin(context = applicationContext)
+        AndroidKoinManager(applicationContext).run {
+            addModuleFactories(getAndroidModuleFactories())
+            startKoin()
+        }
     }
 }

@@ -7,7 +7,7 @@ import app.cash.sqldelight.TransactionWithoutReturn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class QueryPagingSource<Item : Any>(
+internal class QueryPagingSource<Item : Any>(
     private val context: CoroutineDispatcher,
     private val dbTransaction: (noEnclosing: Boolean, body: TransactionWithoutReturn.() -> Unit) -> Unit,
     private val countQuery: Query<Long>,

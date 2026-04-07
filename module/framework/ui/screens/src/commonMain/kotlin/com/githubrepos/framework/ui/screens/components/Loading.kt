@@ -166,7 +166,7 @@ internal fun RetryViewPreview() {
     }
 }
 
-internal object LoadingTestTags {
+object LoadingTestTags {
 
     private const val PREFIX = "Loading"
 
