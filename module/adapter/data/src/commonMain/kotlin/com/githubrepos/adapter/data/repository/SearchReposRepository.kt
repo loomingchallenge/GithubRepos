@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
+import com.githubrepos.adapter.data.datasource.database.BaseDatabase
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
@@ -22,7 +22,7 @@ internal class SearchReposRepositoryImp(
     private val service: GithubService,
     private val listRepoDao: ListRepoDao,
     private val repoPageDao: RepoPageDao,
-    private val dbWithTransaction: DBWithTransaction,
+    private val baseDatabase: BaseDatabase,
     private val preferences: RepoPreferences,
     private val dispatchers: AppDispatchers,
 ) : SearchReposRepository {
@@ -39,20 +39,21 @@ internal class SearchReposRepositoryImp(
                 service,
                 listRepoDao,
                 repoPageDao,
-                dbWithTransaction,
+                baseDatabase,
                 dispatchers
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow.onStart {
-                if (preferences.query != query) {
-                    preferences.query = query
-                    withContext(dispatchers.io) {
-                        dbWithTransaction.withTransaction {
-                            listRepoDao.deleteAll()
-                            repoPageDao.deleteAll()
-                        }
+            baseDatabase.init()
+            if (preferences.query != query) {
+                preferences.query = query
+                withContext(dispatchers.io) {
+                    baseDatabase.transaction {
+                        listRepoDao.deleteAll()
+                        repoPageDao.deleteAll()
                     }
                 }
             }
+        }
     }
 }

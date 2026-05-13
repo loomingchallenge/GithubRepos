@@ -15,9 +15,9 @@ internal actual fun createHttpClientEngine(): HttpClientEngine {
     }
 }
 
-internal actual fun interceptException(exc: Exception): Exception =
-    if (exc.message?.contains("The Internet connection appears to be offline.") == true) {
+internal actual fun interceptThrowable(throwable: Throwable): Throwable =
+    if (throwable.message?.contains("The Internet connection appears to be offline.") == true) {
         NoInternetException()
     } else {
-        exc
+        throwable
     }

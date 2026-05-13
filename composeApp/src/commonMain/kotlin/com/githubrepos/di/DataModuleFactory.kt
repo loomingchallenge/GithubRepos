@@ -3,15 +3,15 @@ package com.githubrepos.di
 import com.githubrepos.adapter.data.datasource.database.RepoDatabase
 import com.githubrepos.adapter.data.di.createRepoRepository
 import com.githubrepos.adapter.data.di.createSearchReposRepository
+import com.githubrepos.core.repository.RepoRepository
 import com.githubrepos.core.repository.SearchReposRepository
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 class DataModuleFactory: ModuleFactory {
     override fun create(): Module {
         return module {
-            singleOf(::createRepoRepository)
+            single<RepoRepository> { createRepoRepository(get(), get(), get<RepoDatabase>(), get()) }
             single<SearchReposRepository> { createSearchReposRepository(get(), get(), get(), get<RepoDatabase>(), get(), get()) }
         }
     }

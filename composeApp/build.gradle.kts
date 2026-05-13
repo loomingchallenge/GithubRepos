@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import com.githubrepos.`build-logic`.isTestTask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
@@ -100,6 +103,11 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
     sourceSets {
         commonMain.dependencies {
             // Modules
@@ -146,6 +154,12 @@ kotlin {
             // Koin
             implementation(libs.koin.logger.slf4j)
             implementation(libs.logback.classic)
+        }
+        wasmJsMain.dependencies {
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", libs.versions.sqldelight.get()))
+            implementation(npm("sql.js", libs.versions.sqlJs.get()))
+            implementation(devNpm("copy-webpack-plugin", libs.versions.webPackPlugin.get()))
+            implementation(libs.kotlin.browser)
         }
         commonTest.dependencies {
             implementation(project(":module:adapter:data_test"))

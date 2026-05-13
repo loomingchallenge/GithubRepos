@@ -4,42 +4,46 @@ import androidx.paging.PagingSource
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.core.AppDispatchers
 import com.githubrepos.core.entity.ListRepo
-import com.githubrepos.framework.datasource.database.sqldelight.DelightRepoDatabaseQueries
 import com.githubrepos.framework.datasource.database.sqldelight.QueryPagingSource
+import com.githubrepos.framework.datasource.database.sqldelight.RepoDatabaseImp
 
 internal class ListRepoDaoImp(
-    private val queries: DelightRepoDatabaseQueries,
+    private val database: RepoDatabaseImp,
     private val dispatchers: AppDispatchers
 ) : ListRepoDao {
 
-    override fun insert(listRepos: List<ListRepo>) {
-        queries.transaction {
-            listRepos.forEach { listRepo ->
-                queries.insertListRepo(
-                    com.githubrepos.framework.datasource.database.sqldelight.ListRepo(
-                        listRepo.id,
-                        listRepo.name,
-                        listRepo.fullName,
-                        listRepo.description,
-                        listRepo.stars.toLong(),
-                        listRepo.forks.toLong(),
-                        listRepo.language
-                    )
+    override suspend fun insert(listRepos: List<ListRepo>) {
+        listRepos.forEach { listRepo ->
+            database.queries.insertListRepo(
+                com.githubrepos.framework.datasource.database.sqldelight.ListRepo(
+                    listRepo.id,
+                    listRepo.name,
+                    listRepo.fullName,
+                    listRepo.description,
+                    listRepo.stars.toLong(),
+                    listRepo.forks.toLong(),
+                    listRepo.language
                 )
-            }
+            )
+        }
+    }
+
+    override suspend fun insertWithTransaction(listRepos: List<ListRepo>) {
+        database.transaction {
+            insert(listRepos)
         }
     }
 
     override fun getListRepos(): PagingSource<Int, ListRepo> {
         return QueryPagingSource(
             context = dispatchers.io,
-            dbTransaction = queries::transaction,
-            countQuery = queries.countListRepos(),
+            dbTransaction = database::transaction,
+            countQuery = database.queries.countListRepos(),
             getItemsQuery = { limit, offset ->
-                queries.getListRepos(limit, offset, ::createListRepo)
+                database.queries.getListRepos(limit, offset, ::createListRepo)
             },
             getItemOffsetQuery = { item ->
-                queries.getListRepoOffset(item.stars.toLong(), item.name)
+                database.queries.getListRepoOffset(item.stars.toLong(), item.name)
             }
         )
     }
@@ -47,19 +51,19 @@ internal class ListRepoDaoImp(
     override fun getListRepos(queryString: String): PagingSource<Int, ListRepo> {
         return QueryPagingSource(
             context = dispatchers.io,
-            dbTransaction = queries::transaction,
-            countQuery = queries.countListReposByQuery(queryString),
+            dbTransaction = database::transaction,
+            countQuery = database.queries.countListReposByQuery(queryString),
             getItemsQuery = { limit, offset ->
-                queries.getListReposByQuery(queryString, limit, offset, ::createListRepo)
+                database.queries.getListReposByQuery(queryString, limit, offset, ::createListRepo)
             },
             getItemOffsetQuery = { item ->
-                queries.getListRepoOffsetByQuery(queryString, item.stars.toLong(), item.name)
+                database.queries.getListRepoOffsetByQuery(queryString, item.stars.toLong(), item.name)
             }
         )
     }
 
-    override fun deleteAll() {
-        queries.deleteListRepos()
+    override suspend fun deleteAll() {
+        database.queries.deleteListRepos()
     }
 
     private fun createListRepo(

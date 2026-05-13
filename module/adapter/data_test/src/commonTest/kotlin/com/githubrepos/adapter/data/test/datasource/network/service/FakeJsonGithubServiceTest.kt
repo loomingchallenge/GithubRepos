@@ -3,7 +3,7 @@ package com.githubrepos.adapter.data.test.datasource.network.service
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.test.datasource.network.FakeJsonNetworkServiceProvider
 import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
-import com.githubrepos.adapter.data.test.repoCountInJSON
+import com.githubrepos.adapter.data.test.resources.repoCountInJSON
 import com.githubrepos.core.entity.toListRepo
 import com.githubrepos.core.test.repo1
 import com.githubrepos.core.test.repo2

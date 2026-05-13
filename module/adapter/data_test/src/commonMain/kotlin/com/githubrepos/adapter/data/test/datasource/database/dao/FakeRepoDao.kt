@@ -9,15 +9,15 @@ class FakeRepoDao: RepoDao {
 
     private val mapOfFlows = mutableMapOf<Long, MutableStateFlow<Repo?>>()
 
-    override fun insert(repo: Repo) {
+    override suspend fun insert(repo: Repo) {
         getFlow(repo.id).value = repo
     }
 
-    override fun delete(id: Long) {
+    override suspend fun delete(id: Long) {
         getFlow(id).value = null
     }
 
-    override fun deleteAll() {
+    override suspend fun deleteAll() {
         mapOfFlows.keys.forEach { id ->
             delete(id)
         }

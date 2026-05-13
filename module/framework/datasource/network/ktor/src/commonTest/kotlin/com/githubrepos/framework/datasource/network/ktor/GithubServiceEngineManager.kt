@@ -1,8 +1,8 @@
 package com.githubrepos.framework.datasource.network.ktor
 
 import com.githubrepos.adapter.data.datasource.network.BASE_URL
-import com.githubrepos.adapter.data.test.repoJSON
-import com.githubrepos.adapter.data.test.repos1_2JSON
+import com.githubrepos.adapter.data.test.resources.repoJSON
+import com.githubrepos.adapter.data.test.resources.repos1_2JSON
 import com.githubrepos.framework.datasource.network.ktor.service.getRepoEndPoint
 import com.githubrepos.framework.datasource.network.ktor.service.getSearchReposEndPoint
 import io.ktor.client.engine.mock.MockEngine

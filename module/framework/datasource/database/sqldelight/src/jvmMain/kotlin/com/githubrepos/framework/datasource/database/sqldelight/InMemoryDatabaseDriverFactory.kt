@@ -7,9 +7,9 @@ import app.cash.sqldelight.db.QueryResult
 
 internal class InMemoryDatabaseDriverFactory : DatabaseDriverFactory {
 
-    override fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
+    override suspend fun createDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
         val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-        schema.create(driver)
+        schema.create(driver).await()
         return driver
     }
 }

@@ -6,5 +6,5 @@ import app.cash.sqldelight.db.SqlSchema
 
 interface DatabaseDriverFactory {
 
-    fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver
+    suspend fun createDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver
 }

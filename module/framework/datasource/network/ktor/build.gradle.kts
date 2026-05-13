@@ -1,6 +1,8 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import com.githubrepos.`build-logic`.disableAndroidTests
-import com.githubrepos.`build-logic`.isTestTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -33,14 +35,13 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
-
-            // TODO Remove condition isTestTask and move to commonTest when the issue is fixed. https://github.com/JetBrains/compose-multiplatform/issues/4442
-            if (isTestTask()) {
-                implementation(project(":module:adapter:data_test"))
-            }
 
             // Compose
             api(libs.compose.runtime)
@@ -72,6 +73,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.logback.classic)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasm)
         }
     }
 }

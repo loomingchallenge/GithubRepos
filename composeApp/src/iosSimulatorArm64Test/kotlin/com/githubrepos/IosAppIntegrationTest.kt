@@ -1,6 +1,6 @@
 package com.githubrepos
 
-import com.githubrepos.di.CoreModuleFactory
+import com.githubrepos.di.IosCoreModuleFactory
 import com.githubrepos.di.IosSQLModuleFactory
 import com.githubrepos.di.KoinManager
 import com.githubrepos.di.MainModuleFactory
@@ -17,7 +17,7 @@ class IosAppIntegrationTest: AppIntegrationTest() {
     override val koinManager: KoinManager =
         KoinManager().apply {
             addModuleFactories(getIosModuleFactories())
-            replaceModuleFactory(CoreModuleFactory::class, TestCoreModuleFactory())
+            replaceModuleFactory(IosCoreModuleFactory::class, TestCoreModuleFactory())
             replaceModuleFactory(MainModuleFactory::class, TestMainModuleFactory())
             replaceModuleFactory(IosSQLModuleFactory::class, TestIosSQLModuleFactory())
             replaceModuleFactory(SettingsModuleFactory::class, TestSettingsModuleFactory())

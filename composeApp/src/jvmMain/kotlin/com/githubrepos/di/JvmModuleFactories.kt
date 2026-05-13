@@ -4,6 +4,7 @@ import com.githubrepos.ConfigImp
 
 fun getJvmModuleFactories(): List<ModuleFactory> {
     return mutableListOf(
+        JvmCoreModuleFactory(),
         MainModuleFactory(),
         SettingsModuleFactory(),
         JvmSQLModuleFactory()

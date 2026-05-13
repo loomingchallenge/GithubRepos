@@ -1,4 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -26,6 +29,10 @@ kotlin {
             baseName = "navigation"
             isStatic = true
         }
+    }
+
+    wasmJs {
+        browser()
     }
 
     sourceSets {

@@ -12,12 +12,12 @@ import androidx.compose.ui.test.swipeDown
 import androidx.paging.LoadState
 import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
 import com.githubrepos.adapter.data.test.datasource.network.service.FakeGithubService
+import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.test.generateListRepos
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 import com.githubrepos.framework.ui.screens.viewmodel.FakeRepoListViewModel
 import com.githubrepos.framework.ui.test.UITest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -29,8 +29,12 @@ class RepoListScreenTest: UITest() {
         private val networkStateProvider = FakeNetworkStateProvider()
         private val githubService = FakeGithubService(networkStateProvider, generateListRepos(50))
 
-        private val listRepos = runBlocking {
-            githubService.searchRepos("", 1, 10).items
+        private var listRepos: List<ListRepo>? = null
+
+        private suspend fun getListRepos(): List<ListRepo> {
+            return listRepos ?: githubService.searchRepos("", 1, 10).items.also {
+                listRepos = it
+            }
         }
     }
 
@@ -66,7 +70,7 @@ class RepoListScreenTest: UITest() {
     fun testContent() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos)
+        viewModel.emitListRepo(getListRepos())
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
@@ -90,7 +94,7 @@ class RepoListScreenTest: UITest() {
     fun testContentWithPrependLoading() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos, prepend = LoadState.Loading)
+        viewModel.emitListRepo(getListRepos(), prepend = LoadState.Loading)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.PREPEND_LOADING).assertIsDisplayed()
@@ -106,7 +110,7 @@ class RepoListScreenTest: UITest() {
     fun testContentWithPrependError() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos, prepend = LoadState.Error(Exception("Error")))
+        viewModel.emitListRepo(getListRepos(), prepend = LoadState.Error(Exception("Error")))
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.PREPEND_ERROR).assertIsDisplayed()
@@ -122,7 +126,7 @@ class RepoListScreenTest: UITest() {
     fun testContentWithAppendLoading() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos, append = LoadState.Loading)
+        viewModel.emitListRepo(getListRepos(), append = LoadState.Loading)
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
@@ -140,7 +144,7 @@ class RepoListScreenTest: UITest() {
     fun testContentWithAppendError() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos, append = LoadState.Error(Exception("Error")))
+        viewModel.emitListRepo(getListRepos(), append = LoadState.Error(Exception("Error")))
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         onNodeWithTag(RepoListScreenTags.RETRY_VIEW).assertDoesNotExist()
@@ -158,7 +162,7 @@ class RepoListScreenTest: UITest() {
     fun testPullToRefresh() = runComposeUiTest {
         setContent(this)
 
-        viewModel.emitListRepo(listRepos)
+        viewModel.emitListRepo(getListRepos())
         waitForIdle()
         onNodeWithTag(RepoListScreenTags.REPOSITORY_LIST).assertIsDisplayed()
         viewModel.setRepositoryError(Exception())

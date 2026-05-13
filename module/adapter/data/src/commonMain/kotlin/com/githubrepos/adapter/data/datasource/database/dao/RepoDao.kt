@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface RepoDao {
 
-    fun insert(repo: Repo)
+    suspend fun insert(repo: Repo)
 
-    fun delete(id: Long)
+    suspend fun delete(id: Long)
 
-    fun deleteAll()
+    suspend fun deleteAll()
 
     fun getRepo(id: Long): Flow<Repo?>
 }

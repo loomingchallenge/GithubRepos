@@ -1,5 +1,7 @@
 package com.githubrepos.framework.datasource.database.sqldelight
 
+import app.cash.sqldelight.db.SqlDriver
+import com.githubrepos.adapter.data.datasource.database.BaseDatabase
 import com.githubrepos.adapter.data.datasource.database.RepoDatabase
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
@@ -8,28 +10,45 @@ import com.githubrepos.core.AppDispatchers
 import com.githubrepos.framework.datasource.database.sqldelight.dao.ListRepoDaoImp
 import com.githubrepos.framework.datasource.database.sqldelight.dao.RepoDaoImp
 import com.githubrepos.framework.datasource.database.sqldelight.dao.RepoPageDaoImp
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 internal const val REPO_DATABASE_NAME = "DelightRepoDatabase.db"
 
-internal class RepoDatabaseImp(databaseDriverFactory: DatabaseDriverFactory, dispatchers: AppDispatchers): RepoDatabase {
+internal class RepoDatabaseImp(
+    val databaseDriverFactory: DatabaseDriverFactory,
+    dispatchers: AppDispatchers
+): RepoDatabase {
 
-    private val driver = databaseDriverFactory.createDriver(DelightRepoDatabase.Schema)
+    override val repoDao: RepoDao = RepoDaoImp(this, dispatchers)
 
-    private val queries = DelightRepoDatabase(driver).delightRepoDatabaseQueries
+    override val listRepoDao: ListRepoDao = ListRepoDaoImp(this, dispatchers)
 
-    override val repoDao: RepoDao = RepoDaoImp(queries, dispatchers)
+    override val repoPageDao: RepoPageDao = RepoPageDaoImp(this)
 
-    override val listRepoDao: ListRepoDao = ListRepoDaoImp(queries, dispatchers)
+    lateinit var queries: DelightRepoDatabaseQueries
 
-    override val repoPageDao: RepoPageDao = RepoPageDaoImp(queries)
+    private var driver: SqlDriver? = null
 
-    override fun <R> withTransaction(block: () -> R): R {
-        return queries.transactionWithResult {
-            block()
+    private val transactionMutex = Mutex() // Only Wasm requires this. Android, iOS can have different implementation.
+
+    override suspend fun init() {
+        if (driver == null) {
+            val driver = databaseDriverFactory.createDriver(DelightRepoDatabase.Schema)
+            this.driver = driver
+            queries = DelightRepoDatabase(driver).delightRepoDatabaseQueries
+        }
+    }
+
+    override suspend fun transaction(body: suspend BaseDatabase.() -> Unit) {
+        transactionMutex.withLock {
+            return queries.transaction {
+                body()
+            }
         }
     }
 
     override fun close() {
-        driver.close()
+        driver?.close()
     }
 }

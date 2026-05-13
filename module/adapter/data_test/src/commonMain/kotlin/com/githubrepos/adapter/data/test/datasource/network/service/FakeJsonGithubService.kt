@@ -4,11 +4,11 @@ import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.datasource.network.entity.RepositorySearchResponse
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
-import com.githubrepos.adapter.data.test.reposJSON
 import com.githubrepos.core.entity.Repo
 import com.githubrepos.adapter.data.test.datasource.network.entity.FakeRepositorySearchResponse
 import com.githubrepos.adapter.data.test.datasource.network.entity.getPageData
 import com.githubrepos.adapter.data.test.datasource.network.entity.getRepo
+import com.githubrepos.adapter.data.test.resources.reposJSON
 import kotlinx.serialization.json.Json
 
 class FakeJsonGithubService(private val networkStateProvider: NetworkStateProvider): GithubService {

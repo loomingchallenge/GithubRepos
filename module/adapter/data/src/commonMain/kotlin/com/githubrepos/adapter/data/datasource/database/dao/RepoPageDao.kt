@@ -4,13 +4,15 @@ import com.githubrepos.core.entity.RepoPage
 
 interface RepoPageDao {
 
-    fun insert(repoPages: List<RepoPage>)
+    suspend fun insert(repoPages: List<RepoPage>)
 
-    fun getRepoPage(repoId: Long): RepoPage?
+    suspend fun insertWithTransaction(repoPages: List<RepoPage>)
 
-    fun getMinPage(): Long?
+    suspend fun getRepoPage(repoId: Long): RepoPage?
 
-    fun getMaxPage(): Long?
+    suspend fun getMinPage(): Long?
 
-    fun deleteAll()
+    suspend fun getMaxPage(): Long?
+
+    suspend fun deleteAll()
 }

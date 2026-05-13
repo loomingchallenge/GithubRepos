@@ -4,12 +4,13 @@ import androidx.paging.PagingSource
 import com.githubrepos.core.entity.ListRepo
 
 interface ListRepoDao {
+    suspend fun insert(listRepos: List<ListRepo>)
 
-    fun insert(listRepos: List<ListRepo>)
+    suspend fun insertWithTransaction(listRepos: List<ListRepo>)
 
     fun getListRepos(): PagingSource<Int, ListRepo>
 
     fun getListRepos(queryString: String): PagingSource<Int, ListRepo>
 
-    fun deleteAll()
+    suspend fun deleteAll()
 }

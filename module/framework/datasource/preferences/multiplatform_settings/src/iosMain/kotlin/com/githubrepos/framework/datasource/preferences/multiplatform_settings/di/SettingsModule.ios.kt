@@ -10,4 +10,3 @@ import com.russhwolf.settings.KeychainSettings
 fun createRepoPreferences(repoPreferencesName: String = REPO_PREFERENCES_NAME): RepoPreferences {
     return RepoPreferencesImp(KeychainSettings(repoPreferencesName))
 }
-

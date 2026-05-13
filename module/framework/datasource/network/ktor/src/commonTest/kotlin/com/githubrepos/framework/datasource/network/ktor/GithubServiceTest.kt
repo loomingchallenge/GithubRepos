@@ -3,7 +3,7 @@ package com.githubrepos.framework.datasource.network.ktor
 import com.githubrepos.adapter.data.datasource.network.NetworkServiceProvider
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
-import com.githubrepos.adapter.data.test.repoCountInJSON
+import com.githubrepos.adapter.data.test.resources.repoCountInJSON
 import com.githubrepos.core.entity.toListRepo
 import com.githubrepos.core.test.repo1
 import com.githubrepos.core.test.repo2

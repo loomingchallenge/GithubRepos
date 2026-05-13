@@ -1,6 +1,6 @@
 package com.githubrepos
 
-import com.githubrepos.di.CoreModuleFactory
+import com.githubrepos.di.JvmCoreModuleFactory
 import com.githubrepos.di.JvmKoinManager
 import com.githubrepos.di.JvmSQLModuleFactory
 import com.githubrepos.di.KoinManager
@@ -18,7 +18,7 @@ class JvmAppIntegrationTest: AppIntegrationTest() {
     override val koinManager: KoinManager =
         JvmKoinManager().apply {
             addModuleFactories(getJvmModuleFactories())
-            replaceModuleFactory(CoreModuleFactory::class, TestCoreModuleFactory())
+            replaceModuleFactory(JvmCoreModuleFactory::class, TestCoreModuleFactory())
             replaceModuleFactory(MainModuleFactory::class, TestMainModuleFactory())
             replaceModuleFactory(JvmSQLModuleFactory::class, TestJvmSQLModuleFactory())
             replaceModuleFactory(SettingsModuleFactory::class, TestSettingsModuleFactory())

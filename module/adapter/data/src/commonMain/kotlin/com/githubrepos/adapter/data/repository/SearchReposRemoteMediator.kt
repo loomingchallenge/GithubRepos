@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.githubrepos.adapter.data.datasource.database.DBWithTransaction
+import com.githubrepos.adapter.data.datasource.database.BaseDatabase
 import com.githubrepos.adapter.data.datasource.database.dao.ListRepoDao
 import com.githubrepos.adapter.data.datasource.database.dao.RepoPageDao
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
@@ -22,7 +22,7 @@ internal class SearchReposRemoteMediator(
     private val service: GithubService,
     private val listRepoDao: ListRepoDao,
     private val repoPageDao: RepoPageDao,
-    private val dbWithTransaction: DBWithTransaction,
+    private val baseDatabase: BaseDatabase,
     private val dispatchers: AppDispatchers
 ) : RemoteMediator<Int, ListRepo>() {
 
@@ -40,8 +40,8 @@ internal class SearchReposRemoteMediator(
                     val loadedPagesCount = loadPages(loadType, state, pagesToLoad)
                     val endOfPaginationReached = (loadedPagesCount == 0)
                     MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-                } catch (exception: Exception) {
-                    MediatorResult.Error(exception)
+                } catch (throwable: Throwable) {
+                    MediatorResult.Error(throwable)
                 }
             }
         }
@@ -53,7 +53,7 @@ internal class SearchReposRemoteMediator(
         }.toList()
 
         var loadedPagesCount = 0
-        dbWithTransaction.withTransaction {
+        baseDatabase.transaction {
             if (loadType == LoadType.REFRESH) {
                 listRepoDao.deleteAll()
                 repoPageDao.deleteAll()
@@ -72,7 +72,7 @@ internal class SearchReposRemoteMediator(
         return loadedPagesCount
     }
 
-    private fun getPagesToLoad(loadType: LoadType, state: PagingState<Int, ListRepo>): IntRange =
+    private suspend fun getPagesToLoad(loadType: LoadType, state: PagingState<Int, ListRepo>): IntRange =
         when (loadType) {
             LoadType.REFRESH -> {
                 getAnchorPagesToLoad(state) ?: STARTING_PAGE_INDEX..(state.config.initialLoadSize / state.config.pageSize)
@@ -93,7 +93,7 @@ internal class SearchReposRemoteMediator(
             }
         }
 
-    private fun getAnchorPagesToLoad(state: PagingState<Int, ListRepo>): IntRange? {
+    private suspend fun getAnchorPagesToLoad(state: PagingState<Int, ListRepo>): IntRange? {
         val anchor = state.anchorPosition ?: return null
         val pageSize = state.config.pageSize
         val initialLoadSize = state.config.initialLoadSize
@@ -108,11 +108,11 @@ internal class SearchReposRemoteMediator(
         return startPage..endPage
     }
 
-    private fun getPageForFirstItem(): Int? {
+    private suspend fun getPageForFirstItem(): Int? {
         return repoPageDao.getMinPage()?.toInt()
     }
 
-    private fun getPageForLastItem(): Int? {
+    private suspend fun getPageForLastItem(): Int? {
         return repoPageDao.getMaxPage()?.toInt()
     }
 }

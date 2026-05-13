@@ -3,19 +3,19 @@ package com.githubrepos.framework.datasource.database.sqldelight
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import app.cash.sqldelight.Query
-import app.cash.sqldelight.TransactionWithoutReturn
+import app.cash.sqldelight.async.coroutines.awaitAsList
+import app.cash.sqldelight.async.coroutines.awaitAsOne
+import com.githubrepos.adapter.data.datasource.database.BaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 internal class QueryPagingSource<Item : Any>(
     private val context: CoroutineDispatcher,
-    private val dbTransaction: (noEnclosing: Boolean, body: TransactionWithoutReturn.() -> Unit) -> Unit,
+    private val dbTransaction: suspend (body: suspend BaseDatabase.() -> Unit) -> Unit,
     private val countQuery: Query<Long>,
     private val getItemsQuery: (limit: Long, offset: Long) -> Query<Item>,
     private val getItemOffsetQuery: (item: Item) -> Query<Long>
 ) : PagingSource<Int, Item>() {
-
-    private var anchorItem: Item? = null
 
     init {
         val listener = {
@@ -38,8 +38,8 @@ internal class QueryPagingSource<Item : Any>(
                 var totalCount = 0
                 var offset = 0
                 var data = listOf<Item>()
-                dbTransaction(false) {
-                    totalCount = countQuery.executeAsOne().toInt()
+                dbTransaction {
+                    totalCount = countQuery.awaitAsOne().toInt()
                     offset = when (params) {
                         is LoadParams.Refresh -> {
                             if (key >= totalCount - params.loadSize) maxOf(0, totalCount - params.loadSize)
@@ -48,7 +48,7 @@ internal class QueryPagingSource<Item : Any>(
                         is LoadParams.Prepend -> maxOf(0, key - params.loadSize)
                         is LoadParams.Append -> key
                     }
-                    data = getItemsQuery(limit.toLong(), offset.toLong()).executeAsList()
+                    data = getItemsQuery(limit.toLong(), offset.toLong()).awaitAsList()
                 }
                 val nextPosToLoad = offset + data.size
                 val page = LoadResult.Page(
@@ -66,12 +66,13 @@ internal class QueryPagingSource<Item : Any>(
     }
 
     override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
-        val refreshKey = state.anchorPosition?.let {
-            state.closestItemToPosition(it)?.let { anchorItem ->
-                this.anchorItem = anchorItem
-                val anchorOffset = getItemOffsetQuery(anchorItem).executeAsOne().toInt()
-                maxOf(0, anchorOffset - (state.config.initialLoadSize / 2))
-            }
+        val refreshKey = state.anchorPosition?.let { anchorPosition ->
+            maxOf(0, anchorPosition - (state.config.initialLoadSize / 2))
+//          More reliable code, but it does not work on Wasm.
+//            state.closestItemToPosition(anchorPosition)?.let { anchorItem ->
+//                val anchorOffset = getItemOffsetQuery(anchorItem).awaitAsOne().toInt()
+//                maxOf(0, anchorOffset - (state.config.initialLoadSize / 2))
+//            }
         }
         return refreshKey
     }

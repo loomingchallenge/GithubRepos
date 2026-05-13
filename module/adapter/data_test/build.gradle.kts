@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import com.githubrepos.`build-logic`.disableAndroidTests
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -32,6 +35,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(project(":module:adapter:data"))
@@ -39,7 +46,6 @@ kotlin {
 
             // Compose
             api(libs.compose.runtime)
-            implementation(libs.compose.components.resources)
 
             // Kotlin serialization
             implementation(libs.kotlinx.serialization)

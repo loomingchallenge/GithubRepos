@@ -20,9 +20,9 @@ internal actual fun createHttpClientEngine(): HttpClientEngine {
     }
 }
 
-internal actual fun interceptException(exc: Exception): Exception =
-    if (exc is UnknownHostException) {
+internal actual fun interceptThrowable(throwable: Throwable): Throwable =
+    if (throwable is UnknownHostException) {
         NoInternetException()
     } else {
-        exc
+        throwable
     }

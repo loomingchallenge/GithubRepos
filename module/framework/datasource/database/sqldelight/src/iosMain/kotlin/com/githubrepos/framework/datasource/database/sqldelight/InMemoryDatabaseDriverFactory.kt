@@ -1,5 +1,6 @@
 package com.githubrepos.framework.datasource.database.sqldelight
 
+import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -9,16 +10,18 @@ import co.touchlab.sqliter.DatabaseConfiguration
 
 internal class InMemoryDatabaseDriverFactory : DatabaseDriverFactory {
 
-    override fun createDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
+    override suspend fun createDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
         return NativeSqliteDriver(
             configuration = DatabaseConfiguration(
                 name = "Test$REPO_DATABASE_NAME",
-                version = schema.version.toInt(),
+                version = schema.synchronous().version.toInt(),
                 create = { connection ->
-                    wrapConnection(connection) { schema.create(it) }
+                    wrapConnection(connection) { schema.synchronous().create(it) }
                 },
                 upgrade = { connection, oldVersion, newVersion ->
-                    wrapConnection(connection) { schema.migrate(it, oldVersion.toLong(), newVersion.toLong()) }
+                    wrapConnection(connection) {
+                        schema.synchronous().migrate(it, oldVersion.toLong(), newVersion.toLong())
+                    }
                 },
                 inMemory = true
             )

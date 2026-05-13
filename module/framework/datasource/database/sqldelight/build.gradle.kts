@@ -1,4 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -25,6 +28,10 @@ kotlin {
             baseName = "sqldelight"
             isStatic = true
         }
+    }
+
+    wasmJs {
+        browser()
     }
 
     sourceSets {
@@ -56,6 +63,9 @@ kotlin {
             implementation(libs.sqldelight.sqlite.driver)
             implementation(libs.logback.classic)
         }
+        wasmJsMain.dependencies {
+            implementation(libs.sqldelight.web.worker.driver)
+        }
     }
 }
 
@@ -75,6 +85,7 @@ sqldelight {
     databases {
         create("DelightRepoDatabase") {
             packageName.set("com.githubrepos.framework.datasource.database.sqldelight")
+            generateAsync.set(true)
         }
     }
 }

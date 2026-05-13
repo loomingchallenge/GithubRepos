@@ -5,16 +5,16 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
 import com.githubrepos.core.AppDispatchers
 import com.githubrepos.core.entity.Repo
-import com.githubrepos.framework.datasource.database.sqldelight.DelightRepoDatabaseQueries
+import com.githubrepos.framework.datasource.database.sqldelight.RepoDatabaseImp
 import kotlinx.coroutines.flow.Flow
 
 internal class RepoDaoImp(
-    private val queries: DelightRepoDatabaseQueries,
+    private val database: RepoDatabaseImp,
     private val dispatchers: AppDispatchers
 ): RepoDao {
 
-    override fun insert(repo: Repo) {
-        queries.insertRepo(
+    override suspend fun insert(repo: Repo) {
+        database.queries.insertRepo(
             com.githubrepos.framework.datasource.database.sqldelight.Repo(
                 repo.id,
                 repo.name,
@@ -31,16 +31,17 @@ internal class RepoDaoImp(
         )
     }
 
-    override fun delete(id: Long) {
-        queries.deleteRepo(id)
+    override suspend fun delete(id: Long) {
+        database.queries.deleteRepo(id)
     }
 
-    override fun deleteAll() {
-        queries.deleteRepos()
+    override suspend fun deleteAll() {
+        database.queries.deleteRepos()
     }
 
     override fun getRepo(id: Long): Flow<Repo?> {
-        return queries.getRepo(id, ::createRepo)
+        return database.queries
+            .getRepo(id, ::createRepo)
             .asFlow()
             .mapToOneOrNull(dispatchers.io)
     }

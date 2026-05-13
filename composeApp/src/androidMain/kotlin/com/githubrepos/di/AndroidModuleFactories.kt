@@ -6,7 +6,8 @@ fun getAndroidModuleFactories(): List<ModuleFactory> {
     return mutableListOf(
         MainModuleFactory(),
         SettingsModuleFactory(),
-        AndroidSQLModuleFactory()
+        AndroidSQLModuleFactory(),
+        AndroidCoreModuleFactory()
     ).apply {
         addAll(getCommonModuleFactories(ConfigImp))
     }

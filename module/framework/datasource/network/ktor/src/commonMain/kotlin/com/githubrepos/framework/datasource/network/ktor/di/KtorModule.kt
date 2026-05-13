@@ -53,8 +53,8 @@ internal fun createHttpClient(httpClientEngine: HttpClientEngine, areLogsEnabled
     client.plugin(HttpSend).intercept { request ->
         try {
             execute(request)
-        } catch (exc: Exception) {
-            throw interceptException(exc)
+        } catch (throwable: Throwable) {
+            throw interceptThrowable(throwable)
         }
     }
     return client
@@ -62,4 +62,4 @@ internal fun createHttpClient(httpClientEngine: HttpClientEngine, areLogsEnabled
 
 internal expect fun createHttpClientEngine(): HttpClientEngine
 
-internal expect fun interceptException(exc: Exception): Exception
+internal expect fun interceptThrowable(throwable: Throwable): Throwable

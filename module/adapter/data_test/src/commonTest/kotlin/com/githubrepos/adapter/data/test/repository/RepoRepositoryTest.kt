@@ -3,6 +3,7 @@ package com.githubrepos.adapter.data.test.repository
 import app.cash.turbine.test
 import com.githubrepos.adapter.data.datasource.network.NoInternetException
 import com.githubrepos.adapter.data.di.createRepoRepository
+import com.githubrepos.adapter.data.test.datasource.database.FakeDatabase
 import com.githubrepos.adapter.data.test.datasource.database.dao.FakeRepoDao
 import com.githubrepos.adapter.data.test.datasource.network.FakeJsonNetworkServiceProvider
 import com.githubrepos.adapter.data.test.datasource.network.FakeNetworkStateProvider
@@ -20,7 +21,7 @@ internal class RepoRepositoryTest {
     private val networkServiceProvider = FakeJsonNetworkServiceProvider(networkStateProvider)
     private val githubService = networkServiceProvider.createGithubService()
     private val repoDao = FakeRepoDao()
-    private val repoRepository = createRepoRepository(networkStateProvider, githubService, repoDao)
+    private val repoRepository = createRepoRepository(networkStateProvider, githubService, FakeDatabase(), repoDao)
 
     @Test
     fun `getRepo with empty database`() = runTest {

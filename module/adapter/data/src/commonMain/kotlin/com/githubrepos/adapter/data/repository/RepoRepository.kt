@@ -2,6 +2,7 @@ package com.githubrepos.adapter.data.repository
 
 import com.githubrepos.adapter.data.convertor.fromDBToDomain
 import com.githubrepos.adapter.data.convertor.fromNetworkToDB
+import com.githubrepos.adapter.data.datasource.database.BaseDatabase
 import com.githubrepos.adapter.data.datasource.database.dao.RepoDao
 import com.githubrepos.adapter.data.datasource.network.NetworkStateProvider
 import com.githubrepos.adapter.data.datasource.network.service.GithubService
@@ -12,6 +13,7 @@ import com.githubrepos.core.repository.RepoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
@@ -23,6 +25,7 @@ typealias RepoStore = Store<Long, Repo>
 internal class RepoRepositoryImp(
     private val networkStateProvider: NetworkStateProvider,
     private val githubService: GithubService,
+    private val baseDatabase: BaseDatabase,
     private val repoDao: RepoDao
 ): RepoRepository, RepoStore by create(githubService, repoDao) {
 
@@ -57,6 +60,8 @@ internal class RepoRepositoryImp(
         } else {
             StoreReadRequest.cached(id, networkStateProvider.hasNetworkConnection())
         }
-        return this.stream(request).toLce()
+        return this.stream(request)
+            .toLce()
+            .onStart { baseDatabase.init() }
     }
 }

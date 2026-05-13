@@ -1,12 +1,12 @@
 [versions]
-versionCode = "38"
-versionName = "1.3.30"
+versionCode = "39"
+versionName = "1.4.0"
 android-minSdk = "27"
 android-compileSdk = "36"
 android-targetSdk = "36"
 android-gradle-plugin = "8.11.1"
 jvm-target = "11"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 compose-multiplatform = "1.10.2"
 androidx-compose-ui = "1.10.1"
 compose-material-icons-extended = "1.7.3"
@@ -17,12 +17,15 @@ androidx-lifecycle = "2.10.0-beta01"
 androidx-navigation = "2.9.2"
 kotlinx-coroutines-swing = "1.10.2"
 kotlinx-serialization = "1.10.0"
+kotlin-wrappers = "2026.4.9"
 kotlinx-coroutines = "1.10.2"
 androidx-paging = "3.4.1"
 store = "5.1.0-alpha08"
 atomicfu = "0.31.0"
 gson = "2.13.2"
-sqldelight = "2.2.1"
+sqldelight = "2.3.2"
+sqlJs = "1.8.0"
+webPackPlugin = "9.1.0"
 touchlab = "2.1.0"
 androidx-security = "1.1.0"
 multiplatform-settings = "1.3.0"
@@ -53,6 +56,7 @@ compose-material-icons-extended = { module = "org.jetbrains.compose.material:mat
 
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines-swing" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlin-browser = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-browser", version.ref = "kotlin-wrappers" }
 
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx-paging" }
@@ -66,6 +70,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 sqldelight-android-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
+sqldelight-web-worker-driver = { group = "app.cash.sqldelight", name = "web-worker-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 touchlab-stately-common = { group = "co.touchlab", name = "stately-common", version.ref = "touchlab" }
 touchlab-stately-isolate = { group = "co.touchlab", name = "stately-isolate", version.ref = "touchlab" }
@@ -87,6 +92,7 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-wasm = { group = "io.ktor", name = "ktor-client-js-wasm-js", version.ref = "ktor"}
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor" }
 ktor-client-json = { group = "io.ktor", name = "ktor-client-json", version.ref = "ktor" }

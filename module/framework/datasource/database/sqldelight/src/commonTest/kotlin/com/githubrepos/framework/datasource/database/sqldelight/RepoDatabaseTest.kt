@@ -45,7 +45,9 @@ internal abstract class RepoDatabaseTest(private val databaseDriverFactory: Data
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun repoDaoTest() = runTest(testDispatcher) {
+    open fun repoDaoTest() = runTest(testDispatcher) {
+        initTest()
+
         val repoDao = repoDatabase.repoDao
         repoDao.deleteAll()
 
@@ -77,7 +79,9 @@ internal abstract class RepoDatabaseTest(private val databaseDriverFactory: Data
     }
 
     @Test
-    fun repoPageDaoTest() = runTest(testDispatcher) {
+    open fun repoPageDaoTest() = runTest(testDispatcher) {
+        initTest()
+
         val repoPageDao = repoDatabase.repoPageDao
         repoPageDao.deleteAll()
 
@@ -91,7 +95,9 @@ internal abstract class RepoDatabaseTest(private val databaseDriverFactory: Data
     }
 
     @Test
-    fun listRepoDaoTest() = runTest(testDispatcher) {
+    open fun listRepoDaoTest() = runTest(testDispatcher) {
+        initTest()
+
         val listRepoDao = repoDatabase.listRepoDao
         listRepoDao.deleteAll()
 
@@ -109,6 +115,10 @@ internal abstract class RepoDatabaseTest(private val databaseDriverFactory: Data
         )
         assertTrue(loadResult is PagingSource.LoadResult.Page)
         assertEquals(expectedRepos, loadResult.data)
+    }
+
+    private suspend fun initTest() {
+        repoDatabase.init()
     }
 
     private fun generateListRepos(count: Int) = (1..count).map {
