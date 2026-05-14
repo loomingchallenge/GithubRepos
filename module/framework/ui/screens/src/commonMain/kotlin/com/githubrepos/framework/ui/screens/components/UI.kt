@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -16,7 +18,6 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.githubrepos.adapter.presentation.error.ErrorReporter
 import com.githubrepos.adapter.presentation.error.getMessage
 import com.githubrepos.framework.ui.screens.navigation.NavigationController
@@ -43,12 +45,12 @@ fun UI(navigationController: NavigationController) {
         Box(modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .windowInsetsPadding(
-                WindowInsets.displayCutout
-            )
+            .windowInsetsPadding(WindowInsets.displayCutout)
         ) {
             Scaffold(
-                modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                modifier = Modifier.windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                ),
                 topBar = topBarController.topBar.value
             ) { innerPadding ->
                 navigationController.NavHost(Modifier.padding(innerPadding), topBarController)
@@ -61,7 +63,7 @@ fun UI(navigationController: NavigationController) {
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
 internal fun Error(errorReporter: ErrorReporter) {
-    val errorData by errorReporter.error.collectAsState() // TODO collectAsStateWithLifecycle requires at least Compose UI 1.7.0-alpha05. https://stackoverflow.com/questions/78490378/java-lang-illegalstateexception-compositionlocal-locallifecycleowner-not-presen
+    val errorData by errorReporter.error.collectAsStateWithLifecycle()
     errorData?.let { error ->
         val snackbarData = object : SnackbarData {
             override val actionLabel: String? = null
