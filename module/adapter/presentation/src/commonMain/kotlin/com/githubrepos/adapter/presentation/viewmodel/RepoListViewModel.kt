@@ -7,12 +7,24 @@ import com.githubrepos.core.entity.ListRepo
 import com.githubrepos.core.repository.SearchReposRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 
 interface RepoListViewModel {
 
     val isPullRefreshSupported: Boolean
 
     val repositoryFlow: Flow<PagingData<ListRepo>>
+
+    val searchQuery: StateFlow<String>
+
+    val isSearchActive: StateFlow<Boolean>
+
+    fun onSearchQueryChanged(query: String)
+
+    fun onSearchActiveChanged(active: Boolean)
 
     suspend fun setRepositoryError(error: Throwable)
 
@@ -28,9 +40,29 @@ internal class RepoListViewModelImp(
 
     private var repositoryError: Throwable? = null
 
-    override val repositoryFlow = searchRepository
-        .getRepositoryFlow("Android")
+    private val _searchQuery = MutableStateFlow("")
+    override val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _isSearchActive = MutableStateFlow(false)
+    override val isSearchActive: StateFlow<Boolean> = _isSearchActive.asStateFlow()
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    override val repositoryFlow = _searchQuery
+        .flatMapLatest { query ->
+            searchRepository.getRepositoryFlow(query)
+        }
         .cachedIn(scope)
+
+    override fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
+    override fun onSearchActiveChanged(active: Boolean) {
+        _isSearchActive.value = active
+        if (!active) {
+            _searchQuery.value = ""
+        }
+    }
 
     override suspend fun setRepositoryError(error: Throwable) {
         if (error != repositoryError) {

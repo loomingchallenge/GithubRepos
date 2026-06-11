@@ -7,6 +7,7 @@ import com.githubrepos.adapter.presentation.viewmodel.RepoListViewModel
 import com.githubrepos.core.entity.ListRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeRepoListViewModel(
@@ -15,6 +16,20 @@ class FakeRepoListViewModel(
     private val _repositoryFlow = MutableStateFlow<PagingData<ListRepo>>(PagingData.empty())
 
     override val repositoryFlow: Flow<PagingData<ListRepo>> = _repositoryFlow.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    override val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _isSearchActive = MutableStateFlow(false)
+    override val isSearchActive: StateFlow<Boolean> = _isSearchActive.asStateFlow()
+
+    override fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
+    override fun onSearchActiveChanged(active: Boolean) {
+        _isSearchActive.value = active
+    }
 
     var repositoryError: Throwable? = null
         private set

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -15,16 +16,25 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -32,10 +42,14 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -51,8 +65,11 @@ import com.githubrepos.framework.ui.screens.preview.listRepo0
 import com.githubrepos.framework.ui.screens.theme.LightGray
 import com.githubrepos.framework.ui.screens.theme.MainTheme
 import githubrepos.module.framework.ui.screens.generated.resources.Res
+import githubrepos.module.framework.ui.screens.generated.resources.repository_list_clear_search
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_language
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_refresh
+import githubrepos.module.framework.ui.screens.generated.resources.repository_list_search
+import githubrepos.module.framework.ui.screens.generated.resources.repository_list_search_hint
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_screen_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -65,15 +82,27 @@ fun RepoListScreen(
 ) {
     val listState = rememberLazyListState()
     val repositories = repoListViewModel.repositoryFlow.collectAsLazyPagingItems()
+    val searchQuery by repoListViewModel.searchQuery.collectAsState()
+    val isSearchActive by repoListViewModel.isSearchActive.collectAsState()
+
     val onRefresh = {
         repoListViewModel.clearRepositoryError()
         repositories.refresh()
     }
     val onRetry = { repositories.retry() }
     setTopBar {
-        RepoListTopBar(onClickRefresh = {
-            onRefresh()
-        })
+        if (isSearchActive) {
+            SearchTopBar(
+                query = searchQuery,
+                onQueryChanged = { repoListViewModel.onSearchQueryChanged(it) },
+                onSearchInactive = { repoListViewModel.onSearchActiveChanged(false) }
+            )
+        } else {
+            RepoListTopBar(
+                onClickRefresh = { onRefresh() },
+                onSearchClicked = { repoListViewModel.onSearchActiveChanged(true) }
+            )
+        }
     }
 
     val modifier = Modifier.fillMaxSize()
@@ -136,32 +165,23 @@ internal fun BoxScope.RepoListWithErrors(
     }
 }
 
-// Alternative code which after bad refresh shows old list (repositories.loadState.refresh is LoadState.Error).
-// It does not work well with Google Paging library. Append retry button can disappear.
-//is LoadState.Loading -> {
-//    if (repositories.itemCount == 0) {
-//        ProgressIndicator(Modifier.align(Alignment.Center))
-//    } else {
-//        RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
-//        ProgressIndicatorInBox()
-//    }
-//}
-//is LoadState.Error -> {
-//    if (repositories.itemCount == 0) {
-//        RetryButton(Modifier.align(Alignment.Center).verticalScroll(rememberScrollState()), loadState.error, onRefresh)
-//    } else {
-//        RepositoryList(repositories, listState, onRetry = onRetry, onRepoItem)
-//        LaunchedEffect(loadState.error) {
-//            repoListViewModel.setRepositoryError(loadState.error)
-//        }
-//    }
-//}
-
 @Composable
-internal fun RepoListTopBar(onClickRefresh: () -> Unit = {}) {
+internal fun RepoListTopBar(
+    onClickRefresh: () -> Unit = {},
+    onSearchClicked: () -> Unit = {}
+) {
     TopAppBar(
         title = @Composable { Text(text = stringResource(resource = Res.string.repository_list_screen_title)) },
         actions = @Composable {
+            IconButton(
+                modifier = Modifier.testTag(RepoListScreenTags.SEARCH_BUTTON),
+                onClick = onSearchClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(resource = Res.string.repository_list_search)
+                )
+            }
             OverflowMenu(
                 modifier = Modifier.testTag(RepoListScreenTags.OVERFLOW_MENU)
             ) { showMenu ->
@@ -182,6 +202,82 @@ internal fun RepoListTopBar(onClickRefresh: () -> Unit = {}) {
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
     )
+}
+
+@Composable
+internal fun SearchTopBar(
+    query: String,
+    onQueryChanged: (String) -> Unit,
+    onSearchInactive: () -> Unit
+) {
+    Surface(
+        color = MaterialTheme.colors.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Surface(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .testTag(RepoListScreenTags.SEARCH_BAR),
+            shape = RoundedCornerShape(50),
+            color = MaterialTheme.colors.onPrimary.copy(alpha = 0.15f),
+            elevation = 0.dp
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                IconButton(
+                    onClick = onSearchInactive,
+                    modifier = Modifier.testTag(RepoListScreenTags.SEARCH_BACK_BUTTON)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    if (query.isEmpty()) {
+                        Text(
+                            text = stringResource(resource = Res.string.repository_list_search_hint),
+                            color = MaterialTheme.colors.onPrimary.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.h6
+                        )
+                    }
+                    BasicTextField(
+                        value = query,
+                        onValueChange = onQueryChanged,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag(RepoListScreenTags.SEARCH_TEXT_FIELD),
+                        textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.onPrimary),
+                        cursorBrush = SolidColor(MaterialTheme.colors.onPrimary),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { /* hide keyboard if needed */ })
+                    )
+                }
+                if (query.isNotEmpty()) {
+                    IconButton(
+                        onClick = { onQueryChanged("") },
+                        modifier = Modifier.testTag(RepoListScreenTags.SEARCH_CLEAR_BUTTON)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = stringResource(resource = Res.string.repository_list_clear_search),
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -335,6 +431,12 @@ object RepoListScreenTags {
     const val OVERFLOW_MENU = "$PREFIX:OverFlowMenu"
 
     const val REFRESH_BUTTON = "$PREFIX:RefreshButton"
+
+    const val SEARCH_BUTTON = "$PREFIX:SearchButton"
+    const val SEARCH_BAR = "$PREFIX:SearchBar"
+    const val SEARCH_BACK_BUTTON = "$PREFIX:SearchBackButton"
+    const val SEARCH_TEXT_FIELD = "$PREFIX:SearchTextField"
+    const val SEARCH_CLEAR_BUTTON = "$PREFIX:SearchClearButton"
 
     fun getRepositoryListItem(id: Long) = "$PREFIX:ListItem:$id"
 }

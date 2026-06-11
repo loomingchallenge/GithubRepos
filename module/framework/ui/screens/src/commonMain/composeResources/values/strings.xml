@@ -5,6 +5,9 @@
     <string name="repository_list_refresh">Refresh</string>
     <string name="repository_list_language">Language: %1$s</string>
     <string name="repository_list_retry">Retry</string>
+    <string name="repository_list_search">Search</string>
+    <string name="repository_list_search_hint">Search repositories...</string>
+    <string name="repository_list_clear_search">Clear search</string>
 
     <!--Repository screen-->
     <string name="repository_screen_title">GitHub Repository</string>
