@@ -10,3 +10,15 @@ plugins {
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.sqldelight) apply false
 }
+
+// TODO Remove when androidx-compose-ui-test-junit4-android use androidx-test-espresso
+//  which works correctly on Android 16, 17.
+subprojects {
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "androidx.test.espresso") {
+                useVersion(libs.versions.androidx.test.espresso.get())
+            }
+        }
+    }
+}

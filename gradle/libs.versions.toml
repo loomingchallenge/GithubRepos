@@ -1,18 +1,19 @@
 [versions]
-versionCode = "41"
-versionName = "1.4.2"
+versionCode = "44"
+versionName = "1.5.2"
 android-minSdk = "27"
-android-compileSdk = "36"
-android-targetSdk = "36"
+android-compileSdk = "37"
+android-targetSdk = "37"
 android-gradle-plugin = "9.3.1"
 jvm-target = "21"
 kotlin = "2.4.10"
 compose-multiplatform = "1.11.1"
-androidx-compose-ui = "1.11.2"
+androidx-compose-ui = "1.11.1"
 compose-material-icons-extended = "1.7.3"
 androidx-activityCompose = "1.12.4"
 androidx-test-core = "1.7.0"
 androidx-test-runner = "1.7.0"
+androidx-test-espresso = "3.7.0"
 androidx-lifecycle = "2.11.0-beta01"
 androidx-navigation = "2.9.2"
 kotlinx-coroutines-swing = "1.11.0"
@@ -109,6 +110,7 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test-runner" }
 androidx-compose-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidx-compose-ui" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-test-espresso" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
