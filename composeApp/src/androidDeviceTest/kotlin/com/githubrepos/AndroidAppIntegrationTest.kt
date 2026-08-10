@@ -16,7 +16,7 @@ class AndroidAppIntegrationTest: AppIntegrationTest() {
 
     override val koinManager: KoinManager =
         AndroidKoinManager(ApplicationProvider.getApplicationContext()).apply {
-            addModuleFactories(getAndroidModuleFactories())
+            addModuleFactories(getAndroidModuleFactories(isDebug = true))
             replaceModuleFactory(AndroidSQLModuleFactory::class, TestAndroidSQLModuleFactory())
             replaceModuleFactory(MainModuleFactory::class, TestMainModuleFactory())
             replaceModuleFactory(SettingsModuleFactory::class, TestSettingsModuleFactory())

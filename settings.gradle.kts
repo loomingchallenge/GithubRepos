@@ -19,6 +19,7 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":androidApp")
 include(":module:core")
 include(":module:core_test")
 include(":module:adapter:data")

@@ -7,15 +7,20 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTes
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "com.githubrepos.framework.datasource.preferences.multiplatform_settings"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.target.get()))
         }
+        withHostTest { }
     }
 
     jvm()
@@ -46,7 +51,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.security)
         }
-        val androidUnitTest by getting {
+        val androidHostTest by getting {
             dependencies {
                 implementation(libs.androidx.test.core)
                 implementation(libs.robolectric)
@@ -61,17 +66,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.githubrepos.framework.datasource.preferences.multiplatform_settings"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
 
 // https://slack-chats.kotlinlang.org/t/16295408/is-it-possible-to-somehow-access-the-ios-keychain-in-kotlin-
 // Hacks to get KeychainSettingsTest running on iOS simulator

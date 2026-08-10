@@ -1,10 +1,6 @@
 package com.githubrepos
 
-import com.githubrepos.BuildConfig
-
-object ConfigImp: Config {
-
-    override val isDebug: Boolean = BuildConfig.DEBUG
+class AndroidConfig(override val isDebug: Boolean) : Config {
 
     override val isPullRefreshSupported = true
 }

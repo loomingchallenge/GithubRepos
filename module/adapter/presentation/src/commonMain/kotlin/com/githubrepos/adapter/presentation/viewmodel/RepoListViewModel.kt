@@ -40,7 +40,7 @@ internal class RepoListViewModelImp(
 
     private var repositoryError: Throwable? = null
 
-    private val _searchQuery = MutableStateFlow("")
+    private val _searchQuery = MutableStateFlow("Android")
     override val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _isSearchActive = MutableStateFlow(false)

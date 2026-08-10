@@ -3,23 +3,28 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "com.githubrepos.framework.ui.screens"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.target.get()))
         }
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+        withDeviceTest {
+
+        }
+        androidResources.enable = true
     }
 
     jvm()
@@ -67,32 +72,24 @@ kotlin {
         jvmTest.dependencies {
             implementation(compose.desktop.currentOs)
         }
-    }
-}
-
-android {
-    namespace = "com.githubrepos.framework.ui.screens"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        compose = true
-    }
-    testOptions {
-        unitTests.all {
-            it.enabled = false
+        androidMain.dependencies {
+            implementation(libs.compose.ui.tooling)
+            implementation(libs.androidx.compose.ui.test.manifest)
+        }
+        val androidDeviceTest by getting {
+            dependsOn(commonTest.get())
+            dependencies {
+                implementation(libs.androidx.test.runner)
+                implementation(libs.androidx.compose.ui.test.junit4.android)
+            }
         }
     }
 }
 
-dependencies {
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4.android)
-}
+//android { TODO doriesit
+//    testOptions {
+//        unitTests.all {
+//            it.enabled = false
+//        }
+//    }
+//}

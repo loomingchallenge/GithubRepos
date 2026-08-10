@@ -1,14 +1,14 @@
 package com.githubrepos.di
 
-import com.githubrepos.ConfigImp
+import com.githubrepos.AndroidConfig
 
-fun getAndroidModuleFactories(): List<ModuleFactory> {
+fun getAndroidModuleFactories(isDebug: Boolean): List<ModuleFactory> {
     return mutableListOf(
         MainModuleFactory(),
         SettingsModuleFactory(),
         AndroidSQLModuleFactory(),
         AndroidCoreModuleFactory()
     ).apply {
-        addAll(getCommonModuleFactories(ConfigImp))
+        addAll(getCommonModuleFactories(AndroidConfig(isDebug)))
     }
 }

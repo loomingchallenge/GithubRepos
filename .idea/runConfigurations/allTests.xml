@@ -11,10 +11,9 @@
       <option name="taskNames">
         <list>
           <option value="jvmTest" />
-          <option value="testDebugUnitTest" />
           <option value="iosSimulatorArm64Test" />
-          <option value="connectedDebugAndroidTest" />
-          <option value="connectedDemoDebugAndroidTest" />
+          <option value="testAndroidHostTest" />
+          <option value="connectedAndroidDeviceTest" />
         </list>
       </option>
       <option name="vmOptions" />
