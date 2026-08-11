@@ -6,6 +6,10 @@ import com.githubrepos.adapter.data.datasource.network.PUBLIC_KEY_PIN
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.engine.darwin.certificates.CertificatePinner
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.Logger
+
+internal actual val ktorLogger: Logger = Logger.DEFAULT
 
 internal actual fun createHttpClientEngine(): HttpClientEngine {
     return Darwin.create {

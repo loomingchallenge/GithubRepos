@@ -8,7 +8,6 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -40,7 +39,7 @@ internal fun createHttpClient(httpClientEngine: HttpClientEngine, areLogsEnabled
         }
         if (areLogsEnabled) {
             install(Logging) {
-                logger = Logger.DEFAULT
+                logger = ktorLogger
                 level = LogLevel.INFO // LogLevel.ALL
             }
         }
@@ -59,6 +58,8 @@ internal fun createHttpClient(httpClientEngine: HttpClientEngine, areLogsEnabled
     }
     return client
 }
+
+internal expect val ktorLogger: Logger
 
 internal expect fun createHttpClientEngine(): HttpClientEngine
 

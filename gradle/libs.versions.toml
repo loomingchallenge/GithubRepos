@@ -1,6 +1,6 @@
 [versions]
-versionCode = "44"
-versionName = "1.5.2"
+versionCode = "45"
+versionName = "1.5.3"
 android-minSdk = "27"
 android-compileSdk = "37"
 android-targetSdk = "37"
@@ -33,7 +33,6 @@ multiplatform-settings = "1.3.0"
 koin-bom = "4.2.2"
 logback-classic = "1.6.1"
 ktor = "3.5.2"
-slf4j = "1.7.36"
 robolectric = "4.16.1"
 turbine = "1.2.1"
 
@@ -101,7 +100,6 @@ ktor-client-json = { group = "io.ktor", name = "ktor-client-json", version.ref =
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
-slf4j-android = { group = "org.slf4j", name = "slf4j-android", version.ref = "slf4j" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }

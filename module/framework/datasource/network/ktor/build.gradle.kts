@@ -70,7 +70,6 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.slf4j.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
