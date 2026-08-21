@@ -12,17 +12,35 @@ internal data class FakeRepositorySearchResponse(
     @SerialName("items") val items: List<FakeRepo>
 )
 
-internal fun FakeRepositorySearchResponse.getPageData(page: Int, itemsPerPage: Int): RepositorySearchResponse {
+internal fun FakeRepositorySearchResponse.getPageData(query: String, page: Int, itemsPerPage: Int): RepositorySearchResponse {
+    val filteredItems = if (query == "stars:>0") {
+        items
+    } else {
+        items.filter { repo ->
+            listOfNotNull(
+                repo.name,
+                repo.fullName,
+                repo.description,
+                repo.url,
+                repo.homepage,
+                repo.cloneUrl,
+                repo.deploymentsUrl,
+                repo.language
+            ).any { it.contains(query, ignoreCase = true) }
+        }
+    }
+
     val firstIndex = itemsPerPage * (page - 1)
-    val lastIndex = (firstIndex + itemsPerPage - 1).coerceAtMost(items.lastIndex)
-    val items = if (firstIndex <= items.lastIndex) {
-        items.subList(firstIndex, lastIndex + 1).map {
+    val lastIndex = (firstIndex + itemsPerPage - 1).coerceAtMost(filteredItems.lastIndex)
+
+    val pagedItems = if (firstIndex <= filteredItems.lastIndex) {
+        filteredItems.subList(firstIndex, lastIndex + 1).map {
             it.toRepo().toListRepo()
         }
     } else {
         listOf()
     }
-    return RepositorySearchResponse(total, items)
+    return RepositorySearchResponse(filteredItems.size, pagedItems)
 }
 
 internal fun FakeRepositorySearchResponse.getRepo(id: Long): Repo {

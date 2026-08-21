@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 
 interface RepoListViewModel {
 
@@ -19,6 +20,8 @@ interface RepoListViewModel {
     val repositoryFlow: Flow<PagingData<ListRepo>>
 
     val searchQuery: StateFlow<String>
+
+    var previousSearchQuery: String
 
     val isSearchActive: StateFlow<Boolean>
 
@@ -40,7 +43,9 @@ internal class RepoListViewModelImp(
 
     private var repositoryError: Throwable? = null
 
-    private val _searchQuery = MutableStateFlow("Android")
+    override var previousSearchQuery: String = searchRepository.lastQuery
+
+    private val _searchQuery = MutableStateFlow(searchRepository.lastQuery)
     override val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _isSearchActive = MutableStateFlow(false)
@@ -50,6 +55,7 @@ internal class RepoListViewModelImp(
     override val repositoryFlow = _searchQuery
         .flatMapLatest { query ->
             searchRepository.getRepositoryFlow(query)
+                .onStart { emit(PagingData.empty()) }
         }
         .cachedIn(scope)
 
@@ -59,9 +65,6 @@ internal class RepoListViewModelImp(
 
     override fun onSearchActiveChanged(active: Boolean) {
         _isSearchActive.value = active
-        if (!active) {
-            _searchQuery.value = ""
-        }
     }
 
     override suspend fun setRepositoryError(error: Throwable) {

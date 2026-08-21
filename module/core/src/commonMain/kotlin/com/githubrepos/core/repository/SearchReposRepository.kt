@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchReposRepository {
 
+    val lastQuery: String
+
     fun getRepositoryFlow(query: String): Flow<PagingData<ListRepo>>
 }

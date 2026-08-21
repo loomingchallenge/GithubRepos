@@ -22,7 +22,7 @@ class FakeJsonGithubService(private val networkStateProvider: NetworkStateProvid
 
     override suspend fun searchRepos(query: String, page: Int, itemsPerPage: Int): RepositorySearchResponse {
         if (networkStateProvider.hasNetworkConnection()) {
-            return response.getPageData(page, itemsPerPage)
+            return response.getPageData(query, page, itemsPerPage)
         } else {
             throw NoInternetException()
         }

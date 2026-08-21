@@ -1,11 +1,12 @@
 package com.githubrepos.framework.ui.screens.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -29,7 +31,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -42,14 +43,27 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -68,9 +82,7 @@ import githubrepos.module.framework.ui.screens.generated.resources.Res
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_clear_search
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_language
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_refresh
-import githubrepos.module.framework.ui.screens.generated.resources.repository_list_search
 import githubrepos.module.framework.ui.screens.generated.resources.repository_list_search_hint
-import githubrepos.module.framework.ui.screens.generated.resources.repository_list_screen_title
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -80,108 +92,198 @@ fun RepoListScreen(
     setTopBar: @Composable (@Composable () -> Unit) -> Unit,
     onRepoItem: (ListRepo) -> Unit
 ) {
-    val listState = rememberLazyListState()
-    val repositories = repoListViewModel.repositoryFlow.collectAsLazyPagingItems()
     val searchQuery by repoListViewModel.searchQuery.collectAsState()
     val isSearchActive by repoListViewModel.isSearchActive.collectAsState()
+    val modifier = Modifier.fillMaxSize()
+
+    val listState = rememberLazyListState()
+    val repositories = repoListViewModel.repositoryFlow.collectAsLazyPagingItems()
+
+    LaunchedEffect(searchQuery) {
+        if (repoListViewModel.previousSearchQuery != searchQuery) {
+            listState.scrollToItem(0)
+            repoListViewModel.previousSearchQuery = searchQuery
+        }
+    }
 
     val onRefresh = {
         repoListViewModel.clearRepositoryError()
         repositories.refresh()
     }
     val onRetry = { repositories.retry() }
-    setTopBar {
-        if (isSearchActive) {
-            SearchTopBar(
-                query = searchQuery,
-                onQueryChanged = { repoListViewModel.onSearchQueryChanged(it) },
-                onSearchInactive = { repoListViewModel.onSearchActiveChanged(false) }
-            )
-        } else {
-            RepoListTopBar(
-                onClickRefresh = { onRefresh() },
-                onSearchClicked = { repoListViewModel.onSearchActiveChanged(true) }
-            )
-        }
-    }
 
-    val modifier = Modifier.fillMaxSize()
+    RepoListTopBar(setTopBar, isSearchActive, searchQuery, onRefresh, repoListViewModel)
+
     if (repoListViewModel.isPullRefreshSupported) {
         val state = getPullRefreshState(repositories, onRefresh)
-        Box(modifier.then(
-                Modifier
-                    .testTag(RepoListScreenTags.SCREEN)
-                    .pullRefresh(state))
-        ) {
-            RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
+        Box(modifier = modifier.pullRefresh(state).testTag(RepoListScreenTags.SCREEN)) {
+            RepositoryListContent(
+                refreshLoadState = repositories.loadState.refresh,
+                onRefresh = onRefresh,
+                repositories = repositories,
+                listState = listState,
+                onRetry = onRetry,
+                onRepoItem = onRepoItem,
+                modifier = Modifier.align(Alignment.Center)
+            )
             PullRefreshIndicator(
-                false,
-                state,
-                Modifier
+                refreshing = false,
+                state = state,
+                modifier = Modifier
                     .testTag(RepoListScreenTags.PULL_REFRESH)
                     .align(Alignment.TopCenter)
             )
         }
     } else {
-        Box(modifier.testTag(RepoListScreenTags.SCREEN)) {
-            RepoListWithErrors(repositories.loadState.refresh, onRefresh, repositories, listState, onRetry, onRepoItem)
+        Box(modifier = modifier.testTag(RepoListScreenTags.SCREEN)) {
+            RepositoryListContent(
+                refreshLoadState = repositories.loadState.refresh,
+                onRefresh = onRefresh,
+                repositories = repositories,
+                listState = listState,
+                onRetry = onRetry,
+                onRepoItem = onRepoItem,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
 
 @Composable
-internal fun BoxScope.RepoListWithErrors(
+internal fun RepoListTopBar(
+    setTopBar: @Composable (@Composable () -> Unit) -> Unit,
+    isSearchActive: Boolean,
+    searchQuery: String,
+    onRefresh: () -> Unit,
+    repoListViewModel: RepoListViewModel
+) {
+    var initialCursorIndex by remember { mutableIntStateOf(0) }
+    setTopBar {
+        if (isSearchActive) {
+            SearchTopBar(
+                query = searchQuery,
+                initialCursorIndex = initialCursorIndex,
+                onQueryChanged = { repoListViewModel.onSearchQueryChanged(it) },
+                onSearchInactive = { repoListViewModel.onSearchActiveChanged(false) }
+            )
+        } else {
+            MainTopBar(
+                query = searchQuery,
+                onClickRefresh = { onRefresh() },
+                onSearchClicked = { index ->
+                    initialCursorIndex = index
+                    repoListViewModel.onSearchActiveChanged(true)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+internal fun RepositoryListContent(
     refreshLoadState: LoadState,
     onRefresh: () -> Unit,
     repositories: LazyPagingItems<ListRepo>,
     listState: LazyListState,
     onRetry: () -> Unit,
-    onRepoItem: (ListRepo) -> Unit
+    onRepoItem: (ListRepo) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     when (refreshLoadState) {
         is LoadState.Loading -> ProgressIndicator(
-            Modifier
-                .testTag(RepoListScreenTags.PROGRESS_INDICATOR)
-                .align(Alignment.Center)
+            modifier = modifier.testTag(RepoListScreenTags.PROGRESS_INDICATOR)
         )
 
         is LoadState.Error -> RetryView(
-            Modifier
-                .align(Alignment.Center)
-                .verticalScroll(
-                    rememberScrollState()
-                ),
+            modifier = modifier
+                .verticalScroll(rememberScrollState()),
             testTag = RepoListScreenTags.RETRY_VIEW,
-            refreshLoadState.error,
-            onRefresh
+            throwable = refreshLoadState.error,
+            onClick = onRefresh
         )
 
         is LoadState.NotLoading -> RepositoryList(
-            repositories,
-            listState,
+            repositories = repositories,
+            listState = listState,
             onRetry = onRetry,
-            onRepoItem
+            onRepoItem = onRepoItem
         )
     }
 }
 
 @Composable
-internal fun RepoListTopBar(
+internal fun MainTopBar(
+    query: String,
     onClickRefresh: () -> Unit = {},
-    onSearchClicked: () -> Unit = {}
+    onSearchClicked: (Int) -> Unit = {}
 ) {
-    TopAppBar(
-        title = @Composable { Text(text = stringResource(resource = Res.string.repository_list_screen_title)) },
-        actions = @Composable {
-            IconButton(
-                modifier = Modifier.testTag(RepoListScreenTags.SEARCH_BUTTON),
-                onClick = onSearchClicked
+    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var containerCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var textCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+
+    Surface(
+        color = MaterialTheme.colors.primary,
+        elevation = AppBarDefaults.TopAppBarElevation,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
+                    .fillMaxHeight()
+                    .testTag(RepoListScreenTags.SEARCH_SURFACE)
+                    .onGloballyPositioned { containerCoordinates = it }
+                    .pointerInput(query) {
+                        detectTapGestures { tapOffset ->
+                            val index = if (query.isNotEmpty() && containerCoordinates != null && textCoordinates != null && textLayoutResult != null) {
+                                val relativeOffset = textCoordinates!!.localPositionOf(containerCoordinates!!, tapOffset).copy(y = 0f)
+                                // If the tap is to the left of the text, start at index 0
+                                if (relativeOffset.x < 0) {
+                                    0
+                                } else {
+                                    textLayoutResult!!.getOffsetForPosition(relativeOffset)
+                                }
+                            } else {
+                                0
+                            }
+                            onSearchClicked(index)
+                        }
+                    },
+                shape = RoundedCornerShape(50),
+                color = MaterialTheme.colors.onPrimary.copy(alpha = 0.15f),
+                elevation = 0.dp
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(resource = Res.string.repository_list_search)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp),
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                    Text(
+                        text = query.ifEmpty { stringResource(resource = Res.string.repository_list_search_hint) },
+                        onTextLayout = { if (query.isNotEmpty()) textLayoutResult = it },
+                        modifier = Modifier.onGloballyPositioned { if (query.isNotEmpty()) textCoordinates = it },
+                        style = MaterialTheme.typography.h6,
+                        color = if (query.isEmpty()) {
+                            MaterialTheme.colors.onPrimary.copy(alpha = 0.6f)
+                        } else {
+                            MaterialTheme.colors.onPrimary
+                        },
+                        maxLines = 1
+                    )
+                }
             }
+
             OverflowMenu(
                 modifier = Modifier.testTag(RepoListScreenTags.OVERFLOW_MENU)
             ) { showMenu ->
@@ -198,18 +300,26 @@ internal fun RepoListTopBar(
                     }
                 )
             }
-        },
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
-    )
+        }
+    }
 }
 
 @Composable
 internal fun SearchTopBar(
     query: String,
+    initialCursorIndex: Int,
     onQueryChanged: (String) -> Unit,
     onSearchInactive: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue(text = query, selection = TextRange(initialCursorIndex)))
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier
@@ -243,7 +353,7 @@ internal fun SearchTopBar(
                         .weight(1f)
                         .padding(horizontal = 8.dp)
                 ) {
-                    if (query.isEmpty()) {
+                    if (textFieldValue.text.isEmpty()) {
                         Text(
                             text = stringResource(resource = Res.string.repository_list_search_hint),
                             color = MaterialTheme.colors.onPrimary.copy(alpha = 0.6f),
@@ -251,21 +361,29 @@ internal fun SearchTopBar(
                         )
                     }
                     BasicTextField(
-                        value = query,
-                        onValueChange = onQueryChanged,
+                        value = textFieldValue,
+                        onValueChange = {
+                            textFieldValue = it
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .focusRequester(focusRequester)
                             .testTag(RepoListScreenTags.SEARCH_TEXT_FIELD),
                         textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.onPrimary),
                         cursorBrush = SolidColor(MaterialTheme.colors.onPrimary),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = { /* hide keyboard if needed */ })
+                        keyboardActions = KeyboardActions(onSearch = {
+                            onQueryChanged(textFieldValue.text)
+                            onSearchInactive()
+                        })
                     )
                 }
-                if (query.isNotEmpty()) {
+                if (textFieldValue.text.isNotEmpty()) {
                     IconButton(
-                        onClick = { onQueryChanged("") },
+                        onClick = {
+                            textFieldValue = TextFieldValue("")
+                        },
                         modifier = Modifier.testTag(RepoListScreenTags.SEARCH_CLEAR_BUTTON)
                     ) {
                         Icon(
@@ -432,7 +550,7 @@ object RepoListScreenTags {
 
     const val REFRESH_BUTTON = "$PREFIX:RefreshButton"
 
-    const val SEARCH_BUTTON = "$PREFIX:SearchButton"
+    const val SEARCH_SURFACE = "$PREFIX:SearchSurface"
     const val SEARCH_BAR = "$PREFIX:SearchBar"
     const val SEARCH_BACK_BUTTON = "$PREFIX:SearchBackButton"
     const val SEARCH_TEXT_FIELD = "$PREFIX:SearchTextField"

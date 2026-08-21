@@ -27,15 +27,18 @@ internal class SearchReposRepositoryImp(
     private val dispatchers: AppDispatchers,
 ) : SearchReposRepository {
 
+    override val lastQuery: String
+        get() = preferences.query ?: ""
+
     override fun getRepositoryFlow(query: String): Flow<PagingData<ListRepo>> {
-        val dbQuery = "%${query.replace(' ', '%')}%"
+        val networkQuery = query.ifBlank { "stars:>0" }
         val pagingSourceFactory = { listRepoDao.getListRepos() }
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = SearchReposRemoteMediator(
-                query,
+                networkQuery,
                 service,
                 listRepoDao,
                 repoPageDao,

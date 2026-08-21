@@ -11,7 +11,7 @@ import java.net.UnknownHostException
 
 internal actual val ktorLogger: Logger = object : Logger {
     override fun log(message: String) {
-        android.util.Log.d("HttpClient", message)
+        println("HttpClient: $message")
     }
 }
 

@@ -17,6 +17,8 @@ class FakeRepoListViewModel(
 
     override val repositoryFlow: Flow<PagingData<ListRepo>> = _repositoryFlow.asStateFlow()
 
+    override var previousSearchQuery = ""
+
     private val _searchQuery = MutableStateFlow("")
     override val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
