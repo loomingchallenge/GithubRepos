@@ -85,6 +85,7 @@ kotlin {
 if ("mac" in System.getProperties()["os.name"].toString().lowercase()) {
     val launchIosSimulator = tasks.register<Exec>("launchIosSimulator") {
         commandLine("open", "-a", "Simulator")
+        isIgnoreExitValue = true
     }
 
     tasks.named("iosSimulatorArm64Test") {

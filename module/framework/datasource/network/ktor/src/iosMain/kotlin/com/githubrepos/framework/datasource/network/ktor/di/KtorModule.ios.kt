@@ -13,9 +13,9 @@ internal actual val ktorLogger: Logger = Logger.DEFAULT
 
 internal actual fun createHttpClientEngine(): HttpClientEngine {
     return Darwin.create {
-        val builder = CertificatePinner.Builder()
-            .add(HOST_NAME_PATTERN, PUBLIC_KEY_PIN)
-        handleChallenge(builder.build())
+//        val builder = CertificatePinner.Builder()
+//            .add(HOST_NAME_PATTERN, PUBLIC_KEY_PIN)
+//        handleChallenge(builder.build())
     }
 }
 

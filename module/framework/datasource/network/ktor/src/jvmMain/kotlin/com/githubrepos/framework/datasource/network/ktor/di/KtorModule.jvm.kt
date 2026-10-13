@@ -15,11 +15,11 @@ internal actual val ktorLogger: Logger = Logger.DEFAULT
 internal actual fun createHttpClientEngine(): HttpClientEngine {
     return OkHttp.create {
         config {
-            val certificatePinner = CertificatePinner.Builder()
-                .add(HOST_NAME_PATTERN, PUBLIC_KEY_PIN)
-                .build()
-
-            certificatePinner(certificatePinner)
+//            val certificatePinner = CertificatePinner.Builder()
+//                .add(HOST_NAME_PATTERN, PUBLIC_KEY_PIN)
+//                .build()
+//
+//            certificatePinner(certificatePinner)
         }
     }
 }
